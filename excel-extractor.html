@@ -1,0 +1,3007 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>MyCosting – Excel Rate Extractor</title>
+
+<!-- Excel processing library -->
+<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+
+<link rel="stylesheet"
+href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Serif:wght@600&display=swap">
+
+<style>
+
+:root{
+  --bg:#eef1f4;
+  --panel:#ffffff;
+  --ink:#14233b;
+  --mute:#5d6b80;
+  --line:#d3dae3;
+  --acc:#0f6b6b;
+  --brass:#b8872b;
+  --danger:#b3261e;
+  --good:#287a45;
+  --warn:#a36b00;
+  --bad:#b3261e;
+  --r:6px;
+}
+
+@media(prefers-color-scheme:dark){
+
+  :root:not([data-theme=light]){
+    --bg:#0f1824;
+    --panel:#172335;
+    --ink:#e6ecf4;
+    --mute:#93a1b5;
+    --line:#2a3a52;
+    --acc:#4fc3c3;
+    --brass:#e0b457;
+    --danger:#ff8a80;
+    --good:#62c684;
+    --warn:#e0b457;
+    --bad:#ff8a80;
+  }
+
+}
+
+*{
+  box-sizing:border-box;
+}
+
+html,
+body{
+  margin:0;
+}
+
+body{
+  background:var(--bg);
+  color:var(--ink);
+  font:15px/1.5 "IBM Plex Sans",system-ui,Arial,sans-serif;
+}
+
+/* =========================================================
+   NAVIGATION
+   ========================================================= */
+
+nav{
+  display:flex;
+  gap:4px;
+  flex-wrap:wrap;
+  align-items:center;
+  background:var(--ink);
+  padding:10px 20px;
+  position:sticky;
+  top:0;
+  z-index:100;
+}
+
+nav b{
+  font-family:"IBM Plex Serif",Georgia,serif;
+  color:#fff;
+  margin-right:18px;
+  font-size:18px;
+}
+
+nav a{
+  color:#c5d0df;
+  text-decoration:none;
+  padding:7px 12px;
+  border-radius:var(--r);
+}
+
+nav a:hover{
+  background:#ffffff1f;
+  color:#fff;
+}
+
+nav a.on{
+  background:var(--brass);
+  color:#14273b;
+  font-weight:600;
+}
+
+/* =========================================================
+   PAGE
+   ========================================================= */
+
+main{
+  max-width:1250px;
+  margin:0 auto;
+  padding:24px 16px 60px;
+}
+
+h1{
+  font:600 25px "IBM Plex Serif",Georgia,serif;
+  margin:0 0 4px;
+}
+
+h2{
+  font-size:17px;
+  margin:0 0 8px;
+}
+
+.subtitle{
+  color:var(--mute);
+  margin-bottom:20px;
+}
+
+/* =========================================================
+   CARDS
+   ========================================================= */
+
+.card{
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:var(--r);
+  padding:18px;
+  margin-bottom:18px;
+}
+
+/* =========================================================
+   UPLOAD AREA
+   ========================================================= */
+
+.upload-zone{
+  border:2px dashed var(--line);
+  border-radius:8px;
+  padding:38px 20px;
+  text-align:center;
+  transition:.15s ease;
+  cursor:pointer;
+}
+
+.upload-zone:hover,
+.upload-zone.drag{
+  border-color:var(--acc);
+  background:var(--bg);
+}
+
+.upload-icon{
+  font-size:38px;
+  margin-bottom:8px;
+}
+
+.upload-title{
+  font-size:17px;
+  font-weight:600;
+}
+
+.upload-text{
+  color:var(--mute);
+  margin:5px 0 15px;
+}
+
+input[type=file]{
+  display:none;
+}
+
+/* =========================================================
+   BUTTONS
+   ========================================================= */
+
+button{
+  font:inherit;
+  cursor:pointer;
+  border-radius:var(--r);
+  border:1px solid var(--line);
+  background:var(--panel);
+  color:var(--ink);
+  padding:8px 13px;
+}
+
+button:hover{
+  background:var(--bg);
+}
+
+button.primary{
+  background:var(--acc);
+  border-color:var(--acc);
+  color:#fff;
+}
+
+button.secondary{
+  background:var(--brass);
+  border-color:var(--brass);
+  color:#14273b;
+}
+
+button.danger{
+  color:var(--danger);
+}
+
+button:disabled{
+  opacity:.5;
+  cursor:not-allowed;
+}
+
+/* =========================================================
+   FILE INFO
+   ========================================================= */
+
+.file-info{
+  display:none;
+  grid-template-columns:2fr 1fr 1fr;
+  gap:12px;
+  margin-top:15px;
+}
+
+.file-box{
+  background:var(--bg);
+  border:1px solid var(--line);
+  border-radius:var(--r);
+  padding:10px 12px;
+}
+
+.file-box label{
+  display:block;
+  font-size:12px;
+  color:var(--mute);
+}
+
+.file-box strong{
+  display:block;
+  margin-top:2px;
+}
+
+/* =========================================================
+   SHEET SELECTOR
+   ========================================================= */
+
+.controls{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  align-items:end;
+}
+
+.control{
+  min-width:180px;
+}
+
+label{
+  display:block;
+  font-size:13px;
+  color:var(--mute);
+  margin-bottom:4px;
+}
+
+select,
+input[type=text],
+input[type=number]{
+  width:100%;
+  font:inherit;
+  color:var(--ink);
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:var(--r);
+  padding:8px;
+}
+
+select:focus-visible,
+input:focus-visible,
+button:focus-visible{
+  outline:2px solid var(--acc);
+  outline-offset:1px;
+}
+
+/* =========================================================
+   STATUS
+   ========================================================= */
+
+.status{
+  display:none;
+  padding:10px 12px;
+  border-radius:var(--r);
+  margin-top:14px;
+  background:var(--bg);
+  border:1px solid var(--line);
+}
+
+.status.show{
+  display:block;
+}
+
+.status.good{
+  border-color:var(--good);
+}
+
+.status.warn{
+  border-color:var(--warn);
+}
+
+.status.error{
+  border-color:var(--bad);
+  color:var(--bad);
+}
+
+/* =========================================================
+   DETECTION
+   ========================================================= */
+
+.detect-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;
+}
+
+.detect-box{
+  border:1px solid var(--line);
+  border-radius:var(--r);
+  padding:12px;
+}
+
+.detect-box .name{
+  font-size:12px;
+  color:var(--mute);
+}
+
+.detect-box .value{
+  font-weight:600;
+  margin-top:3px;
+}
+
+.detect-box.good{
+  border-left:4px solid var(--good);
+}
+
+.detect-box.warn{
+  border-left:4px solid var(--warn);
+}
+
+.detect-box.bad{
+  border-left:4px solid var(--bad);
+}
+
+/* =========================================================
+   TABLE
+   ========================================================= */
+
+.table-wrap{
+  overflow:auto;
+  border:1px solid var(--line);
+  border-radius:var(--r);
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  min-width:950px;
+}
+
+th,
+td{
+  padding:8px 9px;
+  border-bottom:1px solid var(--line);
+  text-align:left;
+  vertical-align:middle;
+}
+
+th{
+  background:var(--bg);
+  color:var(--mute);
+  font-size:12px;
+  font-weight:600;
+  position:sticky;
+  top:0;
+  z-index:2;
+}
+
+td.num,
+th.num{
+  text-align:right;
+  font-variant-numeric:tabular-nums;
+}
+
+td input{
+  padding:6px;
+}
+
+td.desc{
+  min-width:300px;
+}
+
+.rate{
+  font-weight:600;
+}
+
+.variance-positive{
+  color:var(--bad);
+  font-weight:600;
+}
+
+.variance-negative{
+  color:var(--good);
+  font-weight:600;
+}
+
+.variance-neutral{
+  color:var(--mute);
+}
+
+/* =========================================================
+   SUMMARY
+   ========================================================= */
+
+.summary-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:12px;
+}
+
+.metric{
+  background:var(--bg);
+  border:1px solid var(--line);
+  border-radius:var(--r);
+  padding:14px;
+}
+
+.metric .label{
+  color:var(--mute);
+  font-size:12px;
+}
+
+.metric .value{
+  font-size:21px;
+  font-weight:600;
+  margin-top:3px;
+}
+
+/* =========================================================
+   ACTION BAR
+   ========================================================= */
+
+.action-bar{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-top:15px;
+}
+
+/* =========================================================
+   EMPTY
+   ========================================================= */
+
+.empty{
+  text-align:center;
+  padding:35px;
+  color:var(--mute);
+}
+
+/* =========================================================
+   FOOTNOTE
+   ========================================================= */
+
+.note{
+  color:var(--mute);
+  font-size:12px;
+  margin-top:10px;
+}
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media(max-width:800px){
+
+  nav{
+    padding:8px 10px;
+  }
+
+  nav b{
+    width:100%;
+    margin:0 0 4px;
+  }
+
+  nav a{
+    font-size:13px;
+    padding:6px 8px;
+  }
+
+  .file-info{
+    grid-template-columns:1fr;
+  }
+
+  .detect-grid{
+    grid-template-columns:1fr;
+  }
+
+  .summary-grid{
+    grid-template-columns:1fr 1fr;
+  }
+
+}
+
+@media(max-width:500px){
+
+  .summary-grid{
+    grid-template-columns:1fr;
+  }
+
+}
+
+/* =========================================================
+   PRINT
+   ========================================================= */
+
+@media print{
+
+  nav,
+  .upload-zone,
+  .action-bar,
+  button,
+  .note{
+    display:none !important;
+  }
+
+  main{
+    max-width:none;
+  }
+
+  body{
+    background:#fff;
+    color:#000;
+  }
+
+  .card{
+    border:0;
+  }
+
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- =========================================================
+     NAVIGATION
+     ========================================================= -->
+
+<nav>
+
+  <b>MyCosting</b>
+
+  <a href="index.html">
+    Dashboard
+  </a>
+
+  <a href="rate-analysis.html">
+    Rate Analysis
+  </a>
+
+  <a href="excel-extractor.html"
+     class="on"
+     aria-current="page">
+    Excel Extract
+  </a>
+
+  <a href="boq.html">
+    BOQ
+  </a>
+
+  <a href="projects.html">
+    Projects
+  </a>
+
+  <a href="reports.html">
+    Reports
+  </a>
+
+  <a href="settings.html">
+    Settings
+  </a>
+
+</nav>
+
+
+<!-- =========================================================
+     MAIN
+     ========================================================= -->
+
+<main>
+
+  <h1>Excel Rate Extractor</h1>
+
+  <div class="subtitle">
+    Upload your estimate or BOQ Excel file and extract quantities,
+    rates and amounts into MyCosting.
+  </div>
+
+
+  <!-- =======================================================
+       UPLOAD
+       ======================================================= -->
+
+  <section class="card">
+
+    <h2>1. Upload Estimate / BOQ</h2>
+
+    <div class="upload-zone" id="dropZone">
+
+      <div class="upload-icon">📊</div>
+
+      <div class="upload-title">
+        Drop your Excel file here
+      </div>
+
+      <div class="upload-text">
+        or select an Excel file from your computer
+      </div>
+
+      <button
+        type="button"
+        class="primary"
+        id="browseBtn">
+        Choose Excel File
+      </button>
+
+      <input
+        type="file"
+        id="fileInput"
+        accept=".xlsx,.xls,.xlsm,.csv">
+
+    </div>
+
+
+    <div class="file-info" id="fileInfo">
+
+      <div class="file-box">
+        <label>File</label>
+        <strong id="fileName">—</strong>
+      </div>
+
+      <div class="file-box">
+        <label>Sheets</label>
+        <strong id="sheetCount">—</strong>
+      </div>
+
+      <div class="file-box">
+        <label>Size</label>
+        <strong id="fileSize">—</strong>
+      </div>
+
+    </div>
+
+
+    <div id="status"
+         class="status">
+    </div>
+
+  </section>
+
+
+  <!-- =======================================================
+       SHEET SELECTION
+       ======================================================= -->
+
+  <section class="card" id="sheetCard" style="display:none">
+
+    <h2>2. Select Estimate Sheet</h2>
+
+    <div class="controls">
+
+      <div class="control">
+
+        <label for="sheetSelect">
+          Excel Sheet
+        </label>
+
+        <select id="sheetSelect"></select>
+
+      </div>
+
+
+      <button
+        class="primary"
+        id="analyseBtn">
+        Analyse Sheet
+      </button>
+
+    </div>
+
+    <div class="note">
+      MyCosting will try to identify the description,
+      unit, quantity, rate and amount columns automatically.
+    </div>
+
+  </section>
+
+
+  <!-- =======================================================
+       DETECTION
+       ======================================================= -->
+
+  <section class="card"
+           id="detectionCard"
+           style="display:none">
+
+    <h2>3. Column Detection</h2>
+
+    <div class="detect-grid">
+
+      <div class="detect-box"
+           id="detectDescription">
+        <div class="name">Description</div>
+        <div class="value">Not detected</div>
+      </div>
+
+      <div class="detect-box"
+           id="detectUnit">
+        <div class="name">Unit</div>
+        <div class="value">Not detected</div>
+      </div>
+
+      <div class="detect-box"
+           id="detectQty">
+        <div class="name">Quantity</div>
+        <div class="value">Not detected</div>
+      </div>
+
+      <div class="detect-box"
+           id="detectRate">
+        <div class="name">Rate</div>
+        <div class="value">Not detected</div>
+      </div>
+
+      <div class="detect-box"
+           id="detectAmount">
+        <div class="name">Amount</div>
+        <div class="value">Not detected</div>
+      </div>
+
+      <div class="detect-box"
+           id="detectConfidence">
+        <div class="name">Detection confidence</div>
+        <div class="value">—</div>
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- =======================================================
+       SUMMARY
+       ======================================================= -->
+
+  <section class="card"
+           id="summaryCard"
+           style="display:none">
+
+    <h2>4. Extraction Summary</h2>
+
+    <div class="summary-grid">
+
+      <div class="metric">
+        <div class="label">
+          Rows scanned
+        </div>
+        <div class="value"
+             id="rowsScanned">
+          0
+        </div>
+      </div>
+
+      <div class="metric">
+        <div class="label">
+          Items extracted
+        </div>
+        <div class="value"
+             id="itemsExtracted">
+          0
+        </div>
+      </div>
+
+      <div class="metric">
+        <div class="label">
+          Rates found
+        </div>
+        <div class="value"
+             id="ratesFound">
+          0
+        </div>
+      </div>
+
+      <div class="metric">
+        <div class="label">
+          Total estimate value
+        </div>
+        <div class="value"
+             id="estimateTotal">
+          ₹ 0.00
+        </div>
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- =======================================================
+       EXTRACTED TABLE
+       ======================================================= -->
+
+  <section class="card"
+           id="resultsCard"
+           style="display:none">
+
+    <h2>5. Extracted Rates</h2>
+
+    <div class="note">
+      Review the extracted data before importing it into
+      your MyCosting rate library.
+    </div>
+
+    <br>
+
+    <div class="table-wrap">
+
+      <table>
+
+        <thead>
+
+          <tr>
+
+            <th>
+              Excel Row
+            </th>
+
+            <th>
+              Description
+            </th>
+
+            <th>
+              Unit
+            </th>
+
+            <th class="num">
+              Quantity
+            </th>
+
+            <th class="num">
+              Estimate Rate (₹)
+            </th>
+
+            <th class="num">
+              Amount (₹)
+            </th>
+
+            <th>
+              Category
+            </th>
+
+            <th>
+              Benchmark Rate (₹)
+            </th>
+
+            <th class="num">
+              Variance
+            </th>
+
+          </tr>
+
+        </thead>
+
+        <tbody id="resultsBody">
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+
+    <div class="action-bar">
+
+      <button
+        class="secondary"
+        id="exportBtn">
+        Export Extracted CSV
+      </button>
+
+      <button
+        id="printBtn">
+        Print
+      </button>
+
+      <button
+        class="danger"
+        id="clearBtn">
+        Clear
+      </button>
+
+    </div>
+
+  </section>
+
+
+  <!-- =======================================================
+       IMPORTANT NOTICE
+       ======================================================= -->
+
+  <section class="card">
+
+    <h2>Important</h2>
+
+    <div class="note">
+
+      Excel extraction is an automated first pass.
+      Always verify item descriptions, units, quantities and
+      rates against the original estimate before using them
+      for commercial decisions.
+
+      MyCosting does not automatically change the original
+      estimate rate.
+
+    </div>
+
+  </section>
+
+</main>
+
+
+<script>
+
+/* =========================================================
+   GLOBAL DATA
+   ========================================================= */
+
+var workbook = null;
+
+var extracted = [];
+
+var detected = {
+  description:null,
+  unit:null,
+  qty:null,
+  rate:null,
+  amount:null
+};
+
+
+/* =========================================================
+   DOM
+   ========================================================= */
+
+var fileInput =
+  document.getElementById("fileInput");
+
+var dropZone =
+  document.getElementById("dropZone");
+
+var browseBtn =
+  document.getElementById("browseBtn");
+
+var sheetCard =
+  document.getElementById("sheetCard");
+
+var sheetSelect =
+  document.getElementById("sheetSelect");
+
+var analyseBtn =
+  document.getElementById("analyseBtn");
+
+var statusBox =
+  document.getElementById("status");
+
+
+/* =========================================================
+   HELPERS
+   ========================================================= */
+
+function numberValue(v){
+
+  if(v === null ||
+     v === undefined ||
+     v === "")
+    return 0;
+
+  if(typeof v === "number")
+    return v;
+
+  var s =
+    String(v)
+      .replace(/₹/g,"")
+      .replace(/,/g,"")
+      .replace(/%/g,"")
+      .trim();
+
+  var n =
+    parseFloat(s);
+
+  return isNaN(n) ? 0 : n;
+
+}
+
+
+function money(v){
+
+  return (
+    Math.round(
+      numberValue(v) * 100
+    ) / 100
+  ).toLocaleString(
+    "en-IN",
+    {
+      minimumFractionDigits:2,
+      maximumFractionDigits:2
+    }
+  );
+
+}
+
+
+function escapeHtml(s){
+
+  return String(
+    s == null ? "" : s
+  ).replace(
+    /[&<>"]/g,
+    function(c){
+
+      return {
+        "&":"&amp;",
+        "<":"&lt;",
+        ">":"&gt;",
+        '"':"&quot;"
+      }[c];
+
+    }
+  );
+
+}
+
+
+function cleanHeader(v){
+
+  return String(
+    v == null ? "" : v
+  )
+  .toLowerCase()
+  .replace(/\n/g," ")
+  .replace(/[().:/\\\-]/g," ")
+  .replace(/\s+/g," ")
+  .trim();
+
+}
+
+
+function showStatus(message,type){
+
+  statusBox.textContent =
+    message;
+
+  statusBox.className =
+    "status show " +
+    (type || "");
+
+}
+
+
+/* =========================================================
+   FILE SIZE
+   ========================================================= */
+
+function formatSize(bytes){
+
+  if(bytes < 1024)
+    return bytes + " B";
+
+  if(bytes < 1024 * 1024)
+    return (
+      bytes / 1024
+    ).toFixed(1) + " KB";
+
+  return (
+    bytes /
+    (1024 * 1024)
+  ).toFixed(1) + " MB";
+
+}
+
+
+/* =========================================================
+   FILE SELECTION
+   ========================================================= */
+
+browseBtn.addEventListener(
+  "click",
+  function(e){
+
+    e.stopPropagation();
+
+    fileInput.click();
+
+  }
+);
+
+
+dropZone.addEventListener(
+  "click",
+  function(){
+
+    fileInput.click();
+
+  }
+);
+
+
+fileInput.addEventListener(
+  "change",
+  function(){
+
+    if(this.files &&
+       this.files.length){
+
+      loadExcel(
+        this.files[0]
+      );
+
+    }
+
+  }
+);
+
+
+/* =========================================================
+   DRAG AND DROP
+   ========================================================= */
+
+[
+  "dragenter",
+  "dragover"
+].forEach(
+  function(eventName){
+
+    dropZone.addEventListener(
+      eventName,
+      function(e){
+
+        e.preventDefault();
+
+        dropZone.classList.add(
+          "drag"
+        );
+
+      }
+    );
+
+  }
+);
+
+
+[
+  "dragleave",
+  "drop"
+].forEach(
+  function(eventName){
+
+    dropZone.addEventListener(
+      eventName,
+      function(e){
+
+        e.preventDefault();
+
+        dropZone.classList.remove(
+          "drag"
+        );
+
+      }
+    );
+
+  }
+);
+
+
+dropZone.addEventListener(
+  "drop",
+  function(e){
+
+    var files =
+      e.dataTransfer.files;
+
+    if(
+      files &&
+      files.length
+    ){
+
+      loadExcel(
+        files[0]
+      );
+
+    }
+
+  }
+);
+
+
+/* =========================================================
+   LOAD EXCEL
+   ========================================================= */
+
+function loadExcel(file){
+
+  var name =
+    file.name.toLowerCase();
+
+
+  if(
+    !name.endsWith(".xlsx") &&
+    !name.endsWith(".xls") &&
+    !name.endsWith(".xlsm") &&
+    !name.endsWith(".csv")
+  ){
+
+    showStatus(
+      "Please select an Excel or CSV file.",
+      "error"
+    );
+
+    return;
+
+  }
+
+
+  showStatus(
+    "Reading Excel file...",
+    "warn"
+  );
+
+
+  var reader =
+    new FileReader();
+
+
+  reader.onload =
+    function(e){
+
+      try{
+
+        var data =
+          new Uint8Array(
+            e.target.result
+          );
+
+
+        workbook =
+          XLSX.read(
+            data,
+            {
+              type:"array",
+              cellDates:true
+            }
+          );
+
+
+        document.getElementById(
+          "fileInfo"
+        ).style.display =
+          "grid";
+
+
+        document.getElementById(
+          "fileName"
+        ).textContent =
+          file.name;
+
+
+        document.getElementById(
+          "sheetCount"
+        ).textContent =
+          workbook.SheetNames.length;
+
+
+        document.getElementById(
+          "fileSize"
+        ).textContent =
+          formatSize(
+            file.size
+          );
+
+
+        sheetSelect.innerHTML =
+          "";
+
+
+        workbook.SheetNames.forEach(
+          function(name,index){
+
+            var option =
+              document.createElement(
+                "option"
+              );
+
+            option.value =
+              name;
+
+            option.textContent =
+              name;
+
+            sheetSelect.appendChild(
+              option
+            );
+
+          }
+        );
+
+
+        sheetCard.style.display =
+          "block";
+
+
+        var best =
+          findBestSheet();
+
+
+        if(best){
+
+          sheetSelect.value =
+            best;
+
+        }
+
+
+        showStatus(
+          "Excel file loaded successfully.",
+          "good"
+        );
+
+
+        /* Automatically analyse */
+
+        setTimeout(
+          function(){
+
+            analyseSheet();
+
+          },
+          100
+        );
+
+
+      }catch(err){
+
+        console.error(err);
+
+        showStatus(
+          "Unable to read this Excel file. Please check that the file is not corrupted or password protected.",
+          "error"
+        );
+
+      }
+
+    };
+
+
+  reader.onerror =
+    function(){
+
+      showStatus(
+        "Unable to read the selected file.",
+        "error"
+      );
+
+    };
+
+
+  reader.readAsArrayBuffer(
+    file
+  );
+
+}
+
+
+/* =========================================================
+   FIND BEST SHEET
+   ========================================================= */
+
+function findBestSheet(){
+
+  if(!workbook)
+    return null;
+
+
+  var bestSheet =
+    workbook.SheetNames[0];
+
+
+  var bestScore =
+    -1;
+
+
+  workbook.SheetNames.forEach(
+    function(name){
+
+      var sheet =
+        workbook.Sheets[name];
+
+
+      var rows =
+        XLSX.utils.sheet_to_json(
+          sheet,
+          {
+            header:1,
+            defval:"",
+            raw:true
+          }
+        );
+
+
+      var score = 0;
+
+
+      rows
+        .slice(0,20)
+        .forEach(
+          function(row){
+
+            row.forEach(
+              function(cell){
+
+                var h =
+                  cleanHeader(cell);
+
+
+                if(
+                  /description|item description|particular|scope of work|work description/.test(h)
+                )
+                  score += 3;
+
+
+                if(
+                  /unit|uom/.test(h)
+                )
+                  score += 2;
+
+
+                if(
+                  /quantity|qty/.test(h)
+                )
+                  score += 2;
+
+
+                if(
+                  /rate|unit rate/.test(h)
+                )
+                  score += 4;
+
+
+                if(
+                  /amount|total|value/.test(h)
+                )
+                  score += 2;
+
+              }
+            );
+
+          }
+        );
+
+
+      if(score > bestScore){
+
+        bestScore =
+          score;
+
+        bestSheet =
+          name;
+
+      }
+
+    }
+  );
+
+
+  return bestSheet;
+
+}
+
+
+/* =========================================================
+   ANALYSE BUTTON
+   ========================================================= */
+
+analyseBtn.addEventListener(
+  "click",
+  analyseSheet
+);
+
+
+function analyseSheet(){
+
+  if(!workbook){
+
+    showStatus(
+      "Please upload an Excel file first.",
+      "error"
+    );
+
+    return;
+
+  }
+
+
+  var sheet =
+    workbook.Sheets[
+      sheetSelect.value
+    ];
+
+
+  if(!sheet){
+
+    showStatus(
+      "Please select a valid sheet.",
+      "error"
+    );
+
+    return;
+
+  }
+
+
+  var rows =
+    XLSX.utils.sheet_to_json(
+      sheet,
+      {
+        header:1,
+        defval:"",
+        raw:true
+      }
+    );
+
+
+  if(!rows.length){
+
+    showStatus(
+      "The selected sheet appears to be empty.",
+      "error"
+    );
+
+    return;
+
+  }
+
+
+  detected =
+    detectColumns(rows);
+
+
+  displayDetection();
+
+
+  extracted =
+    extractRows(
+      rows,
+      detected
+    );
+
+
+  displayResults();
+
+}
+
+
+/* =========================================================
+   DETECT COLUMNS
+   ========================================================= */
+
+function detectColumns(rows){
+
+  var headerRowIndex =
+    findHeaderRow(rows);
+
+
+  var headers =
+    rows[
+      headerRowIndex
+    ] || [];
+
+
+  var result = {
+
+    description:null,
+    unit:null,
+    qty:null,
+    rate:null,
+    amount:null,
+
+    headerRow:
+      headerRowIndex
+
+  };
+
+
+  var scores = {
+
+    description:[],
+    unit:[],
+    qty:[],
+    rate:[],
+    amount:[]
+
+  };
+
+
+  headers.forEach(
+    function(cell,index){
+
+      var h =
+        cleanHeader(cell);
+
+
+      /* DESCRIPTION */
+
+      var descriptionScore = 0;
+
+      if(
+        /description/.test(h)
+      )
+        descriptionScore += 10;
+
+      if(
+        /item description/.test(h)
+      )
+        descriptionScore += 15;
+
+      if(
+        /particular/.test(h)
+      )
+        descriptionScore += 8;
+
+      if(
+        /scope of work/.test(h)
+      )
+        descriptionScore += 8;
+
+      if(
+        /item|work|activity/.test(h)
+      )
+        descriptionScore += 4;
+
+
+      /* UNIT */
+
+      var unitScore = 0;
+
+      if(
+        h === "unit" ||
+        h === "uom"
+      )
+        unitScore += 15;
+
+      if(
+        /unit|uom/.test(h)
+      )
+        unitScore += 8;
+
+
+      /* QUANTITY */
+
+      var qtyScore = 0;
+
+      if(
+        h === "quantity"
+      )
+        qtyScore += 15;
+
+      if(
+        h === "qty"
+      )
+        qtyScore += 15;
+
+      if(
+        /quantity|qty/.test(h)
+      )
+        qtyScore += 8;
+
+
+      /* RATE */
+
+      var rateScore = 0;
+
+      if(
+        h === "rate"
+      )
+        rateScore += 15;
+
+      if(
+        /unit rate/.test(h)
+      )
+        rateScore += 15;
+
+      if(
+        /rate/.test(h)
+      )
+        rateScore += 10;
+
+
+      /* AMOUNT */
+
+      var amountScore = 0;
+
+      if(
+        h === "amount"
+      )
+        amountScore += 15;
+
+      if(
+        /amount|total amount|value/.test(h)
+      )
+        amountScore += 10;
+
+      if(
+        /total/.test(h)
+      )
+        amountScore += 5;
+
+
+      scores.description.push({
+        index:index,
+        score:descriptionScore
+      });
+
+
+      scores.unit.push({
+        index:index,
+        score:unitScore
+      });
+
+
+      scores.qty.push({
+        index:index,
+        score:qtyScore
+      });
+
+
+      scores.rate.push({
+        index:index,
+        score:rateScore
+      });
+
+
+      scores.amount.push({
+        index:index,
+        score:amountScore
+      });
+
+    }
+  );
+
+
+  function best(arr){
+
+    arr.sort(
+      function(a,b){
+        return b.score-a.score;
+      }
+    );
+
+    return arr.length &&
+           arr[0].score > 0
+      ? arr[0]
+      : null;
+
+  }
+
+
+  var d =
+    best(
+      scores.description
+    );
+
+  var u =
+    best(
+      scores.unit
+    );
+
+  var q =
+    best(
+      scores.qty
+    );
+
+  var r =
+    best(
+      scores.rate
+    );
+
+  var a =
+    best(
+      scores.amount
+    );
+
+
+  result.description =
+    d ? d.index : null;
+
+  result.unit =
+    u ? u.index : null;
+
+  result.qty =
+    q ? q.index : null;
+
+  result.rate =
+    r ? r.index : null;
+
+  result.amount =
+    a ? a.index : null;
+
+
+  return result;
+
+}
+
+
+/* =========================================================
+   FIND HEADER ROW
+   ========================================================= */
+
+function findHeaderRow(rows){
+
+  var bestIndex = 0;
+
+  var bestScore = -1;
+
+
+  rows
+    .slice(0,30)
+    .forEach(
+      function(row,index){
+
+        var score = 0;
+
+
+        row.forEach(
+          function(cell){
+
+            var h =
+              cleanHeader(cell);
+
+
+            if(
+              /description|particular|item description|scope of work/.test(h)
+            )
+              score += 3;
+
+
+            if(
+              /unit|uom/.test(h)
+            )
+              score += 2;
+
+
+            if(
+              /quantity|qty/.test(h)
+            )
+              score += 2;
+
+
+            if(
+              /rate|unit rate/.test(h)
+            )
+              score += 4;
+
+
+            if(
+              /amount|total|value/.test(h)
+            )
+              score += 2;
+
+          }
+        );
+
+
+        if(score > bestScore){
+
+          bestScore =
+            score;
+
+          bestIndex =
+            index;
+
+        }
+
+      }
+    );
+
+
+  return bestIndex;
+
+}
+
+
+/* =========================================================
+   DISPLAY DETECTION
+   ========================================================= */
+
+function displayDetection(){
+
+  document.getElementById(
+    "detectionCard"
+  ).style.display =
+    "block";
+
+
+  setDetection(
+    "detectDescription",
+    detected.description,
+    "Description"
+  );
+
+
+  setDetection(
+    "detectUnit",
+    detected.unit,
+    "Unit"
+  );
+
+
+  setDetection(
+    "detectQty",
+    detected.qty,
+    "Quantity"
+  );
+
+
+  setDetection(
+    "detectRate",
+    detected.rate,
+    "Rate"
+  );
+
+
+  setDetection(
+    "detectAmount",
+    detected.amount,
+    "Amount"
+  );
+
+
+  var found =
+    [
+      detected.description,
+      detected.unit,
+      detected.qty,
+      detected.rate,
+      detected.amount
+    ].filter(
+      function(x){
+        return x !== null;
+      }
+    ).length;
+
+
+  var confidence =
+    found === 5
+      ? "High"
+      : found >= 3
+        ? "Medium"
+        : "Low";
+
+
+  var confidenceBox =
+    document.getElementById(
+      "detectConfidence"
+    );
+
+
+  confidenceBox.querySelector(
+    ".value"
+  ).textContent =
+    confidence;
+
+
+  confidenceBox.className =
+    "detect-box " +
+    (
+      confidence === "High"
+        ? "good"
+        : confidence === "Medium"
+          ? "warn"
+          : "bad"
+    );
+
+}
+
+
+function setDetection(
+  id,
+  column,
+  label
+){
+
+  var box =
+    document.getElementById(
+      id
+    );
+
+
+  var value =
+    box.querySelector(
+      ".value"
+    );
+
+
+  if(column === null){
+
+    value.textContent =
+      "Not detected";
+
+    box.className =
+      "detect-box bad";
+
+    return;
+
+  }
+
+
+  value.textContent =
+    label +
+    " — Column " +
+    excelColumn(
+      column
+    );
+
+
+  box.className =
+    "detect-box good";
+
+}
+
+
+function excelColumn(n){
+
+  var s = "";
+
+  n++;
+
+
+  while(n > 0){
+
+    var rem =
+      (n - 1) % 26;
+
+    s =
+      String.fromCharCode(
+        65 + rem
+      ) + s;
+
+    n =
+      Math.floor(
+        (n - 1) / 26
+      );
+
+  }
+
+
+  return s;
+
+}
+
+
+/* =========================================================
+   EXTRACT ROWS
+   ========================================================= */
+
+function extractRows(
+  rows,
+  columns
+){
+
+  var result = [];
+
+  var start =
+    columns.headerRow + 1;
+
+
+  for(
+    var i=start;
+    i<rows.length;
+    i++
+  ){
+
+    var row =
+      rows[i];
+
+
+    var description =
+      columns.description !== null
+        ? row[
+            columns.description
+          ]
+        : "";
+
+
+    var unit =
+      columns.unit !== null
+        ? row[
+            columns.unit
+          ]
+        : "";
+
+
+    var qty =
+      columns.qty !== null
+        ? numberValue(
+            row[
+              columns.qty
+            ]
+          )
+        : 0;
+
+
+    var rate =
+      columns.rate !== null
+        ? numberValue(
+            row[
+              columns.rate
+            ]
+          )
+        : 0;
+
+
+    var amount =
+      columns.amount !== null
+        ? numberValue(
+            row[
+              columns.amount
+            ]
+          )
+        : 0;
+
+
+    if(
+      !String(description)
+        .trim() &&
+      !unit &&
+      !qty &&
+      !rate &&
+      !amount
+    ){
+
+      continue;
+
+    }
+
+
+    /* Skip obvious headings/subtotals */
+
+    var text =
+      String(
+        description
+      ).trim();
+
+
+    var lower =
+      text.toLowerCase();
+
+
+    if(
+      /^(civil works|civil|structural works|structure|finishing|finishes|electrical|plumbing|hvac|mech|mechanical|grand total|total|subtotal|abstract)$/
+      .test(lower)
+    ){
+
+      continue;
+
+    }
+
+
+    /* If amount missing, calculate it */
+
+    if(
+      !amount &&
+      qty &&
+      rate
+    ){
+
+      amount =
+        qty * rate;
+
+    }
+
+
+    result.push({
+
+      excelRow:i+1,
+
+      description:text,
+
+      unit:String(unit || "").trim(),
+
+      qty:qty,
+
+      rate:rate,
+
+      amount:amount,
+
+      category:
+        guessCategory(
+          text
+        ),
+
+      benchmark:0
+
+    });
+
+  }
+
+
+  return result;
+
+}
+
+
+/* =========================================================
+   CATEGORY DETECTION
+   ========================================================= */
+
+function guessCategory(description){
+
+  var s =
+    String(
+      description
+    ).toLowerCase();
+
+
+  if(
+    /cement|concrete|rcc|pcc|steel|rebar|reinforcement|sand|aggregate|brick|block|tile|marble|granite|paint|door|window|glass|waterproof|bitumen|adhesive|material/.test(s)
+  ){
+
+    return "Material";
+
+  }
+
+
+  if(
+    /mason|labour|labor|carpenter|bar bender|helper|mazdoor|worker|operator|skilled|unskilled/.test(s)
+  ){
+
+    return "Labour";
+
+  }
+
+
+  if(
+    /excavat|crane|mixer|pump|equipment|machinery|scaffolding|vibrator|jcb|bulldozer|loader/.test(s)
+  ){
+
+    return "Equipment";
+
+  }
+
+
+  if(
+    /plumbing|sanitary|electrical|hvac|fire fighting|firefighting|lift|elevator|mep/.test(s)
+  ){
+
+    return "MEP";
+
+  }
+
+
+  return "Other";
+
+}
+
+
+/* =========================================================
+   DISPLAY RESULTS
+   ========================================================= */
+
+function displayResults(){
+
+  var body =
+    document.getElementById(
+      "resultsBody"
+    );
+
+
+  body.innerHTML = "";
+
+
+  if(!extracted.length){
+
+    body.innerHTML =
+      '<tr><td colspan="9" class="empty">' +
+      'No estimate items could be extracted from this sheet.' +
+      '</td></tr>';
+
+
+    document.getElementById(
+      "resultsCard"
+    ).style.display =
+      "block";
+
+
+    return;
+
+  }
+
+
+  extracted.forEach(
+    function(item,index){
+
+      var variance =
+        item.benchmark
+          ? (
+              (
+                item.rate -
+                item.benchmark
+              ) /
+              item.benchmark
+            ) * 100
+          : null;
+
+
+      var varianceText =
+        variance === null
+          ? "—"
+          : (
+              variance > 0
+                ? "+"
+                : ""
+            ) +
+            variance.toFixed(2) +
+            "%";
+
+
+      var varianceClass =
+        variance === null
+          ? "variance-neutral"
+          : variance > 0
+            ? "variance-positive"
+            : variance < 0
+              ? "variance-negative"
+              : "variance-neutral";
+
+
+      var tr =
+        document.createElement(
+          "tr"
+        );
+
+
+      tr.innerHTML =
+
+        '<td>' +
+        item.excelRow +
+        '</td>' +
+
+        '<td class="desc">' +
+        '<input type="text" data-field="description" value="' +
+        escapeHtml(
+          item.description
+        ) +
+        '">' +
+        '</td>' +
+
+        '<td>' +
+        '<input type="text" data-field="unit" value="' +
+        escapeHtml(
+          item.unit
+        ) +
+        '" style="width:70px">' +
+        '</td>' +
+
+        '<td class="num">' +
+        '<input type="number" step="any" data-field="qty" value="' +
+        item.qty +
+        '" style="width:100px;text-align:right">' +
+        '</td>' +
+
+        '<td class="num rate">' +
+        '<input type="number" step="any" data-field="rate" value="' +
+        item.rate +
+        '" style="width:120px;text-align:right">' +
+        '</td>' +
+
+        '<td class="num" data-amount>' +
+        money(
+          item.amount
+        ) +
+        '</td>' +
+
+        '<td>' +
+        '<select data-field="category">' +
+
+        categoryOptions(
+          item.category
+        ) +
+
+        '</select>' +
+
+        '</td>' +
+
+        '<td class="num">' +
+        (
+          item.benchmark
+            ? money(
+                item.benchmark
+              )
+            : "—"
+        ) +
+        '</td>' +
+
+        '<td class="num ' +
+        varianceClass +
+        '" data-variance>' +
+        varianceText +
+        '</td>';
+
+
+      tr.dataset.index =
+        index;
+
+
+      body.appendChild(
+        tr
+      );
+
+    }
+  );
+
+
+  updateSummary();
+
+
+  document.getElementById(
+    "summaryCard"
+  ).style.display =
+    "block";
+
+
+  document.getElementById(
+    "resultsCard"
+  ).style.display =
+    "block";
+
+
+  showStatus(
+    extracted.length +
+    " estimate items extracted successfully.",
+    "good"
+  );
+
+}
+
+
+/* =========================================================
+   CATEGORY OPTIONS
+   ========================================================= */
+
+function categoryOptions(
+  selected
+){
+
+  var categories = [
+
+    "Material",
+    "Labour",
+    "Equipment",
+    "MEP",
+    "Subcontract",
+    "Other"
+
+  ];
+
+
+  return categories.map(
+    function(c){
+
+      return (
+        '<option ' +
+        (
+          c === selected
+            ? "selected"
+            : ""
+        ) +
+        '>' +
+        c +
+        '</option>'
+      );
+
+    }
+  ).join("");
+
+}
+
+
+/* =========================================================
+   EDIT EXTRACTED DATA
+   ========================================================= */
+
+document.getElementById(
+  "resultsBody"
+).addEventListener(
+  "input",
+  function(e){
+
+    var field =
+      e.target.getAttribute(
+        "data-field"
+      );
+
+
+    if(!field)
+      return;
+
+
+    var tr =
+      e.target.closest("tr");
+
+
+    var index =
+      parseInt(
+        tr.dataset.index,
+        10
+      );
+
+
+    var item =
+      extracted[index];
+
+
+    if(field === "qty"){
+
+      item.qty =
+        numberValue(
+          e.target.value
+        );
+
+    }
+    else if(field === "rate"){
+
+      item.rate =
+        numberValue(
+          e.target.value
+        );
+
+    }
+    else{
+
+      item[field] =
+        e.target.value;
+
+    }
+
+
+    item.amount =
+      item.qty *
+      item.rate;
+
+
+    refreshRow(
+      tr,
+      item
+    );
+
+
+    updateSummary();
+
+  }
+);
+
+
+document.getElementById(
+  "resultsBody"
+).addEventListener(
+  "change",
+  function(e){
+
+    var field =
+      e.target.getAttribute(
+        "data-field"
+      );
+
+
+    if(!field)
+      return;
+
+
+    var tr =
+      e.target.closest("tr");
+
+
+    var index =
+      parseInt(
+        tr.dataset.index,
+        10
+      );
+
+
+    extracted[index][field] =
+      e.target.value;
+
+  }
+);
+
+
+/* =========================================================
+   REFRESH ROW
+   ========================================================= */
+
+function refreshRow(
+  tr,
+  item
+){
+
+  var amount =
+    tr.querySelector(
+      "[data-amount]"
+    );
+
+
+  if(amount){
+
+    amount.textContent =
+      money(
+        item.amount
+      );
+
+  }
+
+
+  var variance =
+    item.benchmark
+      ? (
+          (
+            item.rate -
+            item.benchmark
+          ) /
+          item.benchmark
+        ) * 100
+      : null;
+
+
+  var v =
+    tr.querySelector(
+      "[data-variance]"
+    );
+
+
+  if(v){
+
+    v.textContent =
+      variance === null
+        ? "—"
+        : (
+            variance > 0
+              ? "+"
+              : ""
+          ) +
+          variance.toFixed(2) +
+          "%";
+
+
+    v.className =
+      "num " +
+      (
+        variance === null
+          ? "variance-neutral"
+          : variance > 0
+            ? "variance-positive"
+            : variance < 0
+              ? "variance-negative"
+              : "variance-neutral"
+      );
+
+  }
+
+}
+
+
+/* =========================================================
+   SUMMARY
+   ========================================================= */
+
+function updateSummary(){
+
+  var total = 0;
+
+  var rates = 0;
+
+
+  extracted.forEach(
+    function(item){
+
+      total +=
+        numberValue(
+          item.amount
+        );
+
+
+      if(
+        numberValue(
+          item.rate
+        ) > 0
+      ){
+
+        rates++;
+
+      }
+
+    }
+  );
+
+
+  document.getElementById(
+    "rowsScanned"
+  ).textContent =
+    detected.headerRow +
+    1;
+
+
+  document.getElementById(
+    "itemsExtracted"
+  ).textContent =
+    extracted.length;
+
+
+  document.getElementById(
+    "ratesFound"
+  ).textContent =
+    rates;
+
+
+  document.getElementById(
+    "estimateTotal"
+  ).textContent =
+    "₹ " +
+    money(total);
+
+}
+
+
+/* =========================================================
+   EXPORT CSV
+   ========================================================= */
+
+document.getElementById(
+  "exportBtn"
+).addEventListener(
+  "click",
+  function(){
+
+    if(!extracted.length){
+
+      alert(
+        "There are no extracted items to export."
+      );
+
+      return;
+
+    }
+
+
+    var rows = [
+
+      [
+        "Excel Row",
+        "Description",
+        "Unit",
+        "Quantity",
+        "Estimate Rate",
+        "Amount",
+        "Category",
+        "Benchmark Rate",
+        "Variance %"
+      ]
+
+    ];
+
+
+    extracted.forEach(
+      function(item){
+
+        var variance =
+          item.benchmark
+            ? (
+                (
+                  item.rate -
+                  item.benchmark
+                ) /
+                item.benchmark
+              ) * 100
+            : "";
+
+
+        rows.push([
+
+          item.excelRow,
+
+          item.description,
+
+          item.unit,
+
+          item.qty,
+
+          item.rate,
+
+          item.amount,
+
+          item.category,
+
+          item.benchmark,
+
+          variance
+
+        ]);
+
+      }
+    );
+
+
+    var csv =
+      rows.map(
+        function(row){
+
+          return row.map(
+            function(value){
+
+              return '"' +
+                String(
+                  value == null
+                    ? ""
+                    : value
+                ).replace(
+                  /"/g,
+                  '""'
+                ) +
+                '"';
+
+            }
+          ).join(",");
+
+        }
+      ).join("\n");
+
+
+    var blob =
+      new Blob(
+        [csv],
+        {
+          type:
+            "text/csv;charset=utf-8;"
+        }
+      );
+
+
+    var url =
+      URL.createObjectURL(
+        blob
+      );
+
+
+    var a =
+      document.createElement(
+        "a"
+      );
+
+
+    a.href = url;
+
+    a.download =
+      "MyCosting_Extracted_Rates.csv";
+
+
+    document.body.appendChild(a);
+
+    a.click();
+
+    document.body.removeChild(a);
+
+    URL.revokeObjectURL(url);
+
+  }
+);
+
+
+/* =========================================================
+   PRINT
+   ========================================================= */
+
+document.getElementById(
+  "printBtn"
+).addEventListener(
+  "click",
+  function(){
+
+    window.print();
+
+  }
+);
+
+
+/* =========================================================
+   CLEAR
+   ========================================================= */
+
+document.getElementById(
+  "clearBtn"
+).addEventListener(
+  "click",
+  function(){
+
+    if(
+      !confirm(
+        "Clear the uploaded Excel data and extracted results?"
+      )
+    ){
+
+      return;
+
+    }
+
+
+    workbook = null;
+
+    extracted = [];
+
+    detected = {
+
+      description:null,
+      unit:null,
+      qty:null,
+      rate:null,
+      amount:null
+
+    };
+
+
+    fileInput.value = "";
+
+    document.getElementById(
+      "fileInfo"
+    ).style.display =
+      "none";
+
+
+    sheetCard.style.display =
+      "none";
+
+
+    document.getElementById(
+      "detectionCard"
+    ).style.display =
+      "none";
+
+
+    document.getElementById(
+      "summaryCard"
+    ).style.display =
+      "none";
+
+
+    document.getElementById(
+      "resultsCard"
+    ).style.display =
+      "none";
+
+
+    statusBox.className =
+      "status";
+
+
+    statusBox.textContent = "";
+
+  }
+);
+
+
+/* =========================================================
+   INITIAL STATE
+   ========================================================= */
+
+showStatus(
+  "Select an Excel estimate or BOQ file to begin.",
+  "warn"
+);
+
+</script>
+
+</body>
+</html>
+```
