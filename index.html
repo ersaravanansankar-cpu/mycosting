@@ -1,13 +1,12 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 
-<title>SS Consults – Construction Cost Management</title>
-<a href="excel-extractor.html">
-  Excel Extract
-</a>
+<title>MyCosting – Construction Cost Management</title>
+
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
@@ -334,6 +333,128 @@ h2{
 }
 
 /* =========================================================
+   GC BOQ REFERENCE RATES
+   ========================================================= */
+
+.reference-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-end;
+  gap:20px;
+  flex-wrap:wrap;
+  margin-top:48px;
+  margin-bottom:16px;
+}
+
+.reference-title{
+  margin:0;
+}
+
+.reference-actions{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+
+.reference-actions a{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  text-decoration:none;
+  color:var(--onacc);
+  background:var(--accent);
+  border:1px solid var(--accent);
+  border-radius:4px;
+  padding:9px 12px;
+  font-weight:600;
+  font-size:15px;
+}
+
+.reference-actions a:hover{
+  opacity:.9;
+}
+
+.reference-summary{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:10px;
+  margin:0 0 16px;
+}
+
+.ref-card{
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:6px;
+  padding:14px;
+  box-shadow:var(--shadow);
+}
+
+.ref-card-label{
+  color:var(--mute);
+  font-size:13px;
+  text-transform:uppercase;
+  letter-spacing:.04em;
+}
+
+.ref-card-value{
+  margin-top:3px;
+  font:700 22px Archivo,sans-serif;
+}
+
+.reference-tools{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin:0 0 10px;
+}
+
+.reference-tools input[type=search]{
+  flex:1 1 280px;
+}
+
+.reference-tools select{
+  flex:0 1 220px;
+}
+
+.badge{
+  display:inline-flex;
+  align-items:center;
+  padding:3px 7px;
+  border-radius:4px;
+  background:var(--hi);
+  color:var(--accent);
+  font-size:12px;
+  font-weight:700;
+  white-space:nowrap;
+}
+
+.source-line{
+  line-height:1.25;
+}
+
+.rate-cell{
+  white-space:nowrap;
+}
+
+.reference-note{
+  margin:10px 0 0;
+  color:var(--mute);
+  font-size:14px;
+}
+
+.ref-empty{
+  padding:30px 20px;
+  text-align:center;
+  color:var(--mute);
+}
+
+.ref-empty strong{
+  color:var(--ink);
+  display:block;
+  margin-bottom:5px;
+}
+
+/* =========================================================
    ADD BENCHMARK
    ========================================================= */
 
@@ -424,6 +545,10 @@ footer{
   .main-nav a{
     white-space:nowrap;
   }
+
+  .reference-summary{
+    grid-template-columns:repeat(2,1fr);
+  }
 }
 
 @media(max-width:600px){
@@ -451,6 +576,23 @@ footer{
   input[type=search],
   .tools select{
     width:100%;
+  }
+
+  .reference-summary{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .reference-head{
+    align-items:flex-start;
+  }
+
+  .reference-actions{
+    width:100%;
+  }
+
+  .reference-actions a{
+    flex:1;
+    justify-content:center;
   }
 }
 </style>
@@ -484,6 +626,11 @@ footer{
       <a href="rate-analysis.html">
         <span class="nav-icon">▤</span>
         Rate Analysis
+      </a>
+
+      <a href="rate-library.html">
+        <span class="nav-icon">▦</span>
+        Rate Library
       </a>
 
       <a href="#" onclick="return false;">
@@ -576,6 +723,105 @@ footer{
     </table>
 
   </div>
+
+  <!-- =======================================================
+       GC BOQ REFERENCE RATES
+       ======================================================= -->
+
+  <div class="reference-head">
+
+    <div>
+
+      <h2 class="reference-title">
+        GC BOQ Reference Rates
+      </h2>
+
+      <p class="lead">
+        Rates imported from your GC BOQ Excel files through the
+        MyCosting Rate Library. These are reference rates and do
+        not replace your baseline benchmarks.
+      </p>
+
+    </div>
+
+    <div class="reference-actions">
+
+      <a href="rate-library.html">
+        <span>▦</span>
+        Open Rate Library
+      </a>
+
+    </div>
+
+  </div>
+
+  <div class="reference-summary">
+
+    <div class="ref-card">
+      <div class="ref-card-label">Total Items</div>
+      <div class="ref-card-value" id="refItems">0</div>
+    </div>
+
+    <div class="ref-card">
+      <div class="ref-card-label">Items With Rates</div>
+      <div class="ref-card-value" id="refRated">0</div>
+    </div>
+
+    <div class="ref-card">
+      <div class="ref-card-label">BOQ Value</div>
+      <div class="ref-card-value" id="refValue">₹0</div>
+    </div>
+
+    <div class="ref-card">
+      <div class="ref-card-label">Sources</div>
+      <div class="ref-card-value" id="refSources">0</div>
+    </div>
+
+  </div>
+
+  <div class="reference-tools">
+
+    <input
+      type="search"
+      id="refQ"
+      placeholder="Search GC BOQ item, project or source"
+      aria-label="Search GC BOQ reference rates"
+    >
+
+    <select id="refD" aria-label="Filter GC BOQ rates by discipline">
+      <option value="">All disciplines</option>
+    </select>
+
+  </div>
+
+  <p class="count" id="refCount" role="status"></p>
+
+  <div class="tbl">
+
+    <table>
+
+      <thead>
+        <tr>
+          <th>Discipline</th>
+          <th>Item</th>
+          <th>Unit</th>
+          <th class="r">BOQ Rate (₹)</th>
+          <th>Source Project</th>
+          <th>Excel Source</th>
+        </tr>
+      </thead>
+
+      <tbody id="refRows"></tbody>
+
+    </table>
+
+  </div>
+
+  <p class="reference-note">
+    Source traceability is retained from the imported workbook,
+    including Excel file, sheet and source row. Rate Library data
+    is currently stored in this browser using local storage.
+  </p>
 
   <!-- =======================================================
        QUICK BUDGET
@@ -712,7 +958,6 @@ footer{
 
 </footer>
 
-
 <!-- =========================================================
      JAVASCRIPT
      ========================================================= -->
@@ -720,6 +965,12 @@ footer{
 <script>
 
 (function(){
+
+/* =========================================================
+   CONSTANTS
+   ========================================================= */
+
+var RATE_LIBRARY_KEY="myCosting.rateLibrary.v2";
 
 var D=[
   "Civil",
@@ -735,6 +986,24 @@ var B=[
   "Completed project record",
   "Market information"
 ];
+
+var RATE_DISCIPLINES=[
+  "C&I",
+  "Electrical",
+  "HVAC",
+  "Fire",
+  "PHE",
+  "ELV",
+  "Lift",
+  "External Development",
+  "Landscape",
+  "Specialist",
+  "Other"
+];
+
+/* =========================================================
+   BASELINE BENCHMARKS
+   ========================================================= */
 
 var S=[
 
@@ -969,11 +1238,20 @@ S.forEach(function(r,i){
   r[6]="b"+i;
 });
 
+/* =========================================================
+   APPLICATION STATE
+   ========================================================= */
+
 var U=[],
     db=null,
     canW=false,
     uid=null,
-    bud=[];
+    bud=[],
+    importedRates=[];
+
+/* =========================================================
+   HELPERS
+   ========================================================= */
 
 var $=function(i){
   return document.getElementById(i);
@@ -983,7 +1261,7 @@ var fmt=new Intl.NumberFormat("en-IN");
 
 function esc(s){
 
-  return String(s).replace(
+  return String(s==null?"":s).replace(
     /[&<>"]/g,
     function(c){
       return {
@@ -993,6 +1271,22 @@ function esc(s){
         '"':"&quot;"
       }[c];
     }
+  );
+
+}
+
+function safeNumber(v){
+
+  var n=Number(v);
+
+  return isFinite(n)?n:0;
+
+}
+
+function money(v){
+
+  return "₹"+fmt.format(
+    Math.round(safeNumber(v))
   );
 
 }
@@ -1015,6 +1309,11 @@ function fill(sel,a){
 fill($("d"),D);
 fill($("fd"),D);
 fill($("fb"),B);
+fill($("refD"),RATE_DISCIPLINES);
+
+/* =========================================================
+   ORIGINAL BENCHMARK REPOSITORY
+   ========================================================= */
 
 function all(){
 
@@ -1093,6 +1392,10 @@ function draw(){
     list.length+" of "+a.length+" benchmarks";
 
 }
+
+/* =========================================================
+   QUICK BUDGET
+   ========================================================= */
 
 function drawBud(){
 
@@ -1195,6 +1498,344 @@ function recalc(){
 
 }
 
+/* =========================================================
+   GC BOQ RATE LIBRARY
+   ========================================================= */
+
+function loadImportedRates(){
+
+  try{
+
+    var raw=
+      localStorage.getItem(RATE_LIBRARY_KEY);
+
+    if(!raw){
+      return [];
+    }
+
+    var data=JSON.parse(raw);
+
+    return Array.isArray(data)
+      ? data
+      : [];
+
+  }catch(e){
+
+    return [];
+
+  }
+
+}
+
+function normaliseImportedRate(item,index){
+
+  if(!item || typeof item!=="object"){
+    return null;
+  }
+
+  var description=
+    String(
+      item.description ||
+      item.item ||
+      item.name ||
+      ""
+    ).trim();
+
+  var discipline=
+    String(
+      item.discipline ||
+      "Other"
+    ).trim();
+
+  var unit=
+    String(
+      item.unit ||
+      ""
+    ).trim();
+
+  var rate=safeNumber(
+    item.rate
+  );
+
+  var qty=safeNumber(
+    item.qty
+  );
+
+  var amount=safeNumber(
+    item.amount
+  );
+
+  if(!description){
+    return null;
+  }
+
+  if(!RATE_DISCIPLINES.includes(discipline)){
+    discipline="Other";
+  }
+
+  if(!amount && qty && rate){
+    amount=qty*rate;
+  }
+
+  return {
+    id:
+      item.id ||
+      "ref-"+index,
+
+    description:description,
+
+    discipline:discipline,
+
+    unit:unit,
+
+    qty:qty,
+
+    rate:rate,
+
+    amount:amount,
+
+    sourceFile:
+      String(item.sourceFile || ""),
+
+    sourceSheet:
+      String(item.sourceSheet || item.sheet || ""),
+
+    sourceRow:
+      item.sourceRow ||
+      item.row ||
+      "",
+
+    projectName:
+      String(
+        item.projectName ||
+        item.sourceProject ||
+        ""
+      ),
+
+    sourceType:
+      String(
+        item.sourceType ||
+        "GC BOQ"
+      ),
+
+    rateDate:
+      String(
+        item.rateDate ||
+        ""
+      ),
+
+    importedAt:
+      item.importedAt ||
+      ""
+
+  };
+
+}
+
+function refreshImportedRates(){
+
+  importedRates=
+    loadImportedRates()
+      .map(normaliseImportedRate)
+      .filter(Boolean);
+
+  drawReferenceSummary();
+  drawReferenceRates();
+
+}
+
+function drawReferenceSummary(){
+
+  var rated=
+    importedRates.filter(function(r){
+      return r.rate>0;
+    });
+
+  var value=
+    importedRates.reduce(function(sum,r){
+      return sum+safeNumber(r.amount);
+    },0);
+
+  var sources={};
+
+  importedRates.forEach(function(r){
+
+    var key=
+      [
+        r.projectName,
+        r.sourceFile
+      ].join("|");
+
+    if(key!=="|"){
+      sources[key]=true;
+    }
+
+  });
+
+  $("refItems").textContent=
+    fmt.format(importedRates.length);
+
+  $("refRated").textContent=
+    fmt.format(rated.length);
+
+  $("refValue").textContent=
+    money(value);
+
+  $("refSources").textContent=
+    fmt.format(Object.keys(sources).length);
+
+}
+
+function drawReferenceRates(){
+
+  var q=
+    $("refQ").value
+      .trim()
+      .toLowerCase();
+
+  var d=$("refD").value;
+
+  var list=
+    importedRates.filter(function(r){
+
+      var text=[
+        r.description,
+        r.discipline,
+        r.unit,
+        r.projectName,
+        r.sourceFile,
+        r.sourceSheet
+      ].join(" ").toLowerCase();
+
+      return (
+        (!d || r.discipline===d) &&
+        (!q || text.indexOf(q)>-1)
+      );
+
+    });
+
+  $("refCount").textContent=
+    list.length+
+    " of "+
+    importedRates.length+
+    " imported GC BOQ items";
+
+  if(!list.length){
+
+    $("refRows").innerHTML=
+      '<tr>'+
+      '<td colspan="6" class="ref-empty">'+
+      '<strong>No GC BOQ reference rates available.</strong>'+
+      (
+        importedRates.length
+        ?
+        "No imported items match your search or discipline filter."
+        :
+        'Upload a GC BOQ Excel file in the Rate Library to populate this section.'
+      )+
+      "</td>"+
+      "</tr>";
+
+    return;
+
+  }
+
+  $("refRows").innerHTML=
+    list.map(function(r){
+
+      var sourceDetails=[];
+
+      if(r.sourceSheet){
+        sourceDetails.push(
+          "Sheet: "+esc(r.sourceSheet)
+        );
+      }
+
+      if(r.sourceRow){
+        sourceDetails.push(
+          "Row: "+esc(r.sourceRow)
+        );
+      }
+
+      var project=
+        r.projectName
+        ?
+        esc(r.projectName)
+        :
+        '<span class="sm">Not specified</span>';
+
+      var source=
+        r.sourceFile
+        ?
+        '<div class="source-line">'+
+        '<span class="badge">GC BOQ</span>'+
+        '<div class="sm">'+
+        esc(r.sourceFile)+
+        "</div>"+
+        (
+          sourceDetails.length
+          ?
+          '<div class="sm">'+
+          sourceDetails.join(" · ")+
+          "</div>"
+          :
+          ""
+        )+
+        "</div>"
+        :
+        '<span class="badge">GC BOQ</span>';
+
+      return "<tr>"+
+
+        "<td>"+
+        "<strong>"+esc(r.discipline)+"</strong>"+
+        "</td>"+
+
+        "<td>"+
+        esc(r.description)+
+        (
+          r.rateDate
+          ?
+          '<div class="sm">Rate date: '+
+          esc(r.rateDate)+
+          "</div>"
+          :
+          ""
+        )+
+        "</td>"+
+
+        "<td>"+
+        esc(r.unit || "—")+
+        "</td>"+
+
+        '<td class="r rate-cell">'+
+        (
+          r.rate>0
+          ?
+          money(r.rate)
+          :
+          '<span class="sm">No rate</span>'
+        )+
+        "</td>"+
+
+        "<td>"+
+        project+
+        "</td>"+
+
+        "<td>"+
+        source+
+        "</td>"+
+
+        "</tr>";
+
+    }).join("");
+
+}
+
+/* =========================================================
+   EVENT HANDLERS
+   ========================================================= */
+
 $("q").addEventListener(
   "input",
   draw
@@ -1203,6 +1844,16 @@ $("q").addEventListener(
 $("d").addEventListener(
   "change",
   draw
+);
+
+$("refQ").addEventListener(
+  "input",
+  drawReferenceRates
+);
+
+$("refD").addEventListener(
+  "change",
+  drawReferenceRates
 );
 
 $("rows").addEventListener(
@@ -1216,10 +1867,12 @@ $("rows").addEventListener(
     if(!bud.some(function(b){
       return b.k===a;
     })){
+
       bud.push({
         k:a,
         q:1
       });
+
     }
 
     drawBud();
@@ -1260,6 +1913,10 @@ $("bud").addEventListener(
 
   }
 );
+
+/* =========================================================
+   ADD BENCHMARK
+   ========================================================= */
 
 $("f").addEventListener(
   "submit",
@@ -1335,6 +1992,10 @@ $("f").addEventListener(
   }
 );
 
+/* =========================================================
+   STATUS / DATABASE
+   ========================================================= */
+
 function status(){
 
   $("st").textContent=
@@ -1363,9 +2024,60 @@ function ok(v){
 
 }
 
+/* =========================================================
+   INITIAL DRAW
+   ========================================================= */
+
 draw();
 drawBud();
+refreshImportedRates();
 status();
+
+/* =========================================================
+   LOCAL STORAGE CHANGE DETECTION
+   ========================================================= */
+
+window.addEventListener(
+  "storage",
+  function(e){
+
+    if(e.key===RATE_LIBRARY_KEY){
+
+      refreshImportedRates();
+
+    }
+
+  }
+);
+
+/*
+   Same-tab updates are not fired by the browser's
+   storage event. This lightweight refresh checks the
+   Rate Library periodically so that returning to the
+   Dashboard reflects newly saved imports.
+*/
+
+setInterval(
+  function(){
+
+    var latest=
+      loadImportedRates();
+
+    if(
+      latest.length!==importedRates.length
+    ){
+
+      refreshImportedRates();
+
+    }
+
+  },
+  1500
+);
+
+/* =========================================================
+   SHARED DATABASE INITIALISATION
+   ========================================================= */
 
 (async function(){
 
