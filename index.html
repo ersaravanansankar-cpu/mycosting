@@ -3,178 +3,1442 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Site Ledger – Cost benchmark repository</title>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;800&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
+
+<title>MyCosting – Construction Cost Management</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+
 <style>
-:root{--bg:#eef0f1;--panel:#fff;--ink:#17232e;--mute:#556470;--line:#cfd5d9;--accent:#0f7b8a;--hi:#e3f2f4;--onacc:#fff;
-box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#121a21;--panel:#1b262f;--ink:#e8edf0;--mute:#9aa8b3;--line:#2f3d48;--accent:#4cc3d3;--hi:#1f3a42;--onacc:#0b1a1e}}
-:root[data-theme="dark"]{--bg:#121a21;--panel:#1b262f;--ink:#e8edf0;--mute:#9aa8b3;--line:#2f3d48;--accent:#4cc3d3;--hi:#1f3a42;--onacc:#0b1a1e}
-html{scroll-padding-top:env(safe-area-inset-top,0px)}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font:400 17px/1.5 "Source Sans 3",system-ui,sans-serif}
-h1,h2{font-family:Archivo,system-ui,sans-serif;margin:0;line-height:1.1}
-.wrap{max-width:1040px;margin:0 auto;padding:0 20px}
-header{padding:18px 0;border-bottom:1px solid var(--line);font:800 20px Archivo,sans-serif}
-.intro{padding:44px 0 20px}
-.intro h1{font-size:clamp(32px,5vw,50px);font-weight:800;letter-spacing:-.02em;max-width:20ch}
-.intro p{color:var(--mute);max-width:62ch;margin:14px 0 0}
-.note{margin-top:14px;padding:10px 14px;background:var(--hi);border-left:4px solid var(--accent);border-radius:3px;font-size:15px;max-width:72ch}
-input,select,button{font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:4px;padding:9px 11px}
-.tools{display:flex;gap:10px;flex-wrap:wrap;margin:22px 0 10px}
-input[type=search]{flex:1 1 220px}
-button{cursor:pointer}
-button.primary{background:var(--accent);color:var(--onacc);border-color:var(--accent);font-weight:600}
-:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
-.count{color:var(--mute);font-size:15px;margin:0 0 8px}
-.tbl{overflow-x:auto;background:var(--panel);border:1px solid var(--line);border-radius:6px}
-table{border-collapse:collapse;width:100%;min-width:720px}
-th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
-tr:last-child td{border-bottom:0}
-th{font:600 15px Archivo,sans-serif}
-td.r,th.r{text-align:right;font-variant-numeric:tabular-nums}
-td.r{font-weight:600}
-.sm{font-size:14px;color:var(--mute)}
-.empty{padding:26px;text-align:center;color:var(--mute)}
-h2{font-size:clamp(24px,3.4vw,32px);margin:44px 0 6px}
-.lead{color:var(--mute);margin:0 0 16px;max-width:60ch}
-.qty{width:110px;text-align:right}
-.tot td{font-weight:800;background:var(--hi)}
-details{margin:36px 0 48px;background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:14px 18px}
-summary{cursor:pointer;font:800 18px Archivo,sans-serif}
-form{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-top:16px;align-items:end}
-form label{display:block;font-size:14px;font-weight:600;margin-bottom:4px}
-form input,form select{width:100%}
-#fmsg{margin:10px 0 0;color:var(--mute);font-size:15px}
-footer{padding:24px 0;border-top:1px solid var(--line);color:var(--mute);font-size:15px}
+:root{
+  --bg:#eef0f1;
+  --panel:#fff;
+  --ink:#17232e;
+  --mute:#556470;
+  --line:#cfd5d9;
+  --accent:#0f7b8a;
+  --hi:#e3f2f4;
+  --onacc:#fff;
+  --shadow:0 2px 8px rgba(23,35,46,.06);
+
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#121a21;
+    --panel:#1b262f;
+    --ink:#e8edf0;
+    --mute:#9aa8b3;
+    --line:#2f3d48;
+    --accent:#4cc3d3;
+    --hi:#1f3a42;
+    --onacc:#0b1a1e;
+    --shadow:0 2px 8px rgba(0,0,0,.2);
+  }
+}
+
+:root[data-theme="dark"]{
+  --bg:#121a21;
+  --panel:#1b262f;
+  --ink:#e8edf0;
+  --mute:#9aa8b3;
+  --line:#2f3d48;
+  --accent:#4cc3d3;
+  --hi:#1f3a42;
+  --onacc:#0b1a1e;
+  --shadow:0 2px 8px rgba(0,0,0,.2);
+}
+
+html{
+  scroll-padding-top:env(safe-area-inset-top,0px);
+}
+
+*{
+  box-sizing:border-box;
+}
+
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--ink);
+  font:400 17px/1.5 "Source Sans 3",system-ui,sans-serif;
+}
+
+h1,h2{
+  font-family:Archivo,system-ui,sans-serif;
+  margin:0;
+  line-height:1.1;
+}
+
+.wrap{
+  max-width:1100px;
+  margin:0 auto;
+  padding:0 20px;
+}
+
+/* =========================================================
+   HEADER / NAVIGATION
+   ========================================================= */
+
+header{
+  position:sticky;
+  top:0;
+  z-index:100;
+  background:var(--panel);
+  border-bottom:1px solid var(--line);
+  box-shadow:var(--shadow);
+}
+
+.nav{
+  min-height:68px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:24px;
+}
+
+.brand{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  min-width:190px;
+}
+
+.brand-main{
+  font:800 22px Archivo,sans-serif;
+  letter-spacing:-.02em;
+  color:var(--ink);
+}
+
+.brand-sub{
+  display:block;
+  font:500 11px "Source Sans 3",sans-serif;
+  color:var(--mute);
+  margin-top:-2px;
+  letter-spacing:.03em;
+}
+
+.status{
+  font-size:13px;
+  color:var(--mute);
+  white-space:nowrap;
+}
+
+.main-nav{
+  display:flex;
+  align-items:center;
+  gap:4px;
+  flex-wrap:wrap;
+}
+
+.main-nav a{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  color:var(--ink);
+  text-decoration:none;
+  padding:9px 12px;
+  border:1px solid transparent;
+  border-radius:5px;
+  font:600 15px "Source Sans 3",sans-serif;
+  transition:.15s ease;
+}
+
+.main-nav a:hover{
+  background:var(--hi);
+  border-color:var(--line);
+}
+
+.main-nav a.active{
+  background:var(--accent);
+  color:var(--onacc);
+  border-color:var(--accent);
+}
+
+.nav-icon{
+  font-size:15px;
+  line-height:1;
+}
+
+/* =========================================================
+   PAGE CONTENT
+   ========================================================= */
+
+.intro{
+  padding:44px 0 20px;
+}
+
+.intro h1{
+  font-size:clamp(32px,5vw,50px);
+  font-weight:800;
+  letter-spacing:-.02em;
+  max-width:20ch;
+}
+
+.intro p{
+  color:var(--mute);
+  max-width:70ch;
+  margin:14px 0 0;
+}
+
+.note{
+  margin-top:14px;
+  padding:10px 14px;
+  background:var(--hi);
+  border-left:4px solid var(--accent);
+  border-radius:3px;
+  font-size:15px;
+  max-width:75ch;
+}
+
+/* =========================================================
+   TOOLS
+   ========================================================= */
+
+input,
+select,
+button{
+  font:inherit;
+  color:var(--ink);
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:4px;
+  padding:9px 11px;
+}
+
+.tools{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin:22px 0 10px;
+}
+
+input[type=search]{
+  flex:1 1 220px;
+}
+
+button{
+  cursor:pointer;
+  transition:.15s ease;
+}
+
+button:hover{
+  border-color:var(--accent);
+}
+
+button.primary{
+  background:var(--accent);
+  color:var(--onacc);
+  border-color:var(--accent);
+  font-weight:600;
+}
+
+:focus-visible{
+  outline:3px solid var(--accent);
+  outline-offset:2px;
+}
+
+.count{
+  color:var(--mute);
+  font-size:15px;
+  margin:0 0 8px;
+}
+
+/* =========================================================
+   TABLES
+   ========================================================= */
+
+.tbl{
+  overflow-x:auto;
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:6px;
+  box-shadow:var(--shadow);
+}
+
+table{
+  border-collapse:collapse;
+  width:100%;
+  min-width:720px;
+}
+
+th,
+td{
+  text-align:left;
+  padding:10px 12px;
+  border-bottom:1px solid var(--line);
+  vertical-align:top;
+}
+
+tr:last-child td{
+  border-bottom:0;
+}
+
+th{
+  font:600 15px Archivo,sans-serif;
+}
+
+td.r,
+th.r{
+  text-align:right;
+  font-variant-numeric:tabular-nums;
+}
+
+td.r{
+  font-weight:600;
+}
+
+.sm{
+  font-size:14px;
+  color:var(--mute);
+}
+
+.empty{
+  padding:26px;
+  text-align:center;
+  color:var(--mute);
+}
+
+.add-btn{
+  padding:6px 10px;
+  font-size:14px;
+}
+
+/* =========================================================
+   QUICK BUDGET
+   ========================================================= */
+
+h2{
+  font-size:clamp(24px,3.4vw,32px);
+  margin:44px 0 6px;
+}
+
+.lead{
+  color:var(--mute);
+  margin:0 0 16px;
+  max-width:60ch;
+}
+
+.qty{
+  width:110px;
+  text-align:right;
+}
+
+.tot td{
+  font-weight:800;
+  background:var(--hi);
+}
+
+/* =========================================================
+   ADD BENCHMARK
+   ========================================================= */
+
+details{
+  margin:36px 0 48px;
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:6px;
+  padding:14px 18px;
+}
+
+summary{
+  cursor:pointer;
+  font:800 18px Archivo,sans-serif;
+}
+
+form{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(170px,1fr));
+  gap:12px;
+  margin-top:16px;
+  align-items:end;
+}
+
+form label{
+  display:block;
+  font-size:14px;
+  font-weight:600;
+  margin-bottom:4px;
+}
+
+form input,
+form select{
+  width:100%;
+}
+
+#fmsg{
+  margin:10px 0 0;
+  color:var(--mute);
+  font-size:15px;
+}
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+
+footer{
+  padding:28px 0;
+  margin-top:20px;
+  border-top:1px solid var(--line);
+  color:var(--mute);
+  font-size:15px;
+}
+
+.footer-inner{
+  display:flex;
+  justify-content:space-between;
+  gap:20px;
+  flex-wrap:wrap;
+}
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media(max-width:850px){
+
+  .nav{
+    align-items:flex-start;
+    flex-direction:column;
+    padding-top:12px;
+    padding-bottom:12px;
+    gap:10px;
+  }
+
+  .brand{
+    width:100%;
+    justify-content:space-between;
+  }
+
+  .main-nav{
+    width:100%;
+    overflow-x:auto;
+    flex-wrap:nowrap;
+    padding-bottom:3px;
+  }
+
+  .main-nav a{
+    white-space:nowrap;
+  }
+}
+
+@media(max-width:600px){
+
+  body{
+    font-size:16px;
+  }
+
+  .wrap{
+    padding:0 14px;
+  }
+
+  .intro{
+    padding-top:32px;
+  }
+
+  .intro h1{
+    font-size:34px;
+  }
+
+  .tools{
+    flex-direction:column;
+  }
+
+  input[type=search],
+  .tools select{
+    width:100%;
+  }
+}
 </style>
 </head>
+
 <body>
-<header><div class="wrap">Site Ledger <span id="st" class="sm" role="status"></span></div></header>
+
+<!-- =========================================================
+     MYCOSTING HEADER
+     ========================================================= -->
+
+<header>
+  <div class="wrap nav">
+
+    <div class="brand">
+      <div>
+        <div class="brand-main">MyCosting</div>
+        <div class="brand-sub">Construction Cost Management</div>
+      </div>
+
+      <span id="st" class="status" role="status"></span>
+    </div>
+
+    <nav class="main-nav" aria-label="Main navigation">
+
+      <a href="index.html" class="active">
+        <span class="nav-icon">⌂</span>
+        Dashboard
+      </a>
+
+      <a href="rate-analysis.html">
+        <span class="nav-icon">▤</span>
+        Rate Analysis
+      </a>
+
+      <a href="#" onclick="return false;">
+        <span class="nav-icon">▥</span>
+        BOQ
+      </a>
+
+      <a href="#" onclick="return false;">
+        <span class="nav-icon">▣</span>
+        Projects
+      </a>
+
+      <a href="#" onclick="return false;">
+        <span class="nav-icon">▥</span>
+        Reports
+      </a>
+
+    </nav>
+
+  </div>
+</header>
+
+<!-- =========================================================
+     MAIN CONTENT
+     ========================================================= -->
+
 <main class="wrap">
-<div class="intro">
-<h1>Cost benchmark repository</h1>
-<p>One place for Civil, MEP and Interior benchmarks. Use it for conceptual budgets, feasibility studies and preliminary estimates, not detailed BOQ pricing.</p>
-<div class="note">The figures below are illustrative samples. Replace them with benchmarks built from your historical project data, vendor quotations, completed project records and market information.</div>
-</div>
 
-<div class="tools">
-<input type="search" id="q" placeholder="Search system or discipline" aria-label="Search benchmarks">
-<select id="d" aria-label="Filter by discipline"><option value="">All disciplines</option></select>
-</div>
-<p class="count" id="count" role="status"></p>
-<div class="tbl"><table>
-<thead><tr><th>System</th><th>Discipline</th><th>Unit</th><th class="r">Low (₹)</th><th class="r">High (₹)</th><th>Basis</th><th><span class="sm">Budget</span></th></tr></thead>
-<tbody id="rows"></tbody>
-</table></div>
+  <div class="intro">
 
-<h2>Quick budget</h2>
-<p class="lead">Add benchmarks, enter the quantity for each unit, and read a low–high range.</p>
-<div class="tbl"><table>
-<thead><tr><th>System</th><th>Quantity</th><th class="r">Low (₹)</th><th class="r">High (₹)</th><th></th></tr></thead>
-<tbody id="bud"></tbody>
-</table></div>
+    <h1>Cost benchmark repository</h1>
 
-<p id="gate" class="note">Viewing the repository and building a quick budget are open to everyone. To add benchmarks, sign in with an account that has contributor access.</p>
-<details id="add" hidden><summary>Add a benchmark</summary>
-<form id="f">
-<div><label for="fs">System</label><input id="fs" required placeholder="e.g. Rooftop solar PV"></div>
-<div><label for="fd">Discipline</label><select id="fd"></select></div>
-<div><label for="fu">Unit</label><input id="fu" required placeholder="₹/kWp, ₹/sq ft"></div>
-<div><label for="fl">Low (₹)</label><input id="fl" type="number" min="0" step="any" required></div>
-<div><label for="fh">High (₹)</label><input id="fh" type="number" min="0" step="any" required></div>
-<div><label for="fb">Basis</label><select id="fb"></select></div>
-<div><button class="primary" type="submit">Add benchmark</button></div>
-</form>
-<p id="fmsg">Benchmarks you add are shared with everyone who opens this page.</p>
-</details>
+    <p>
+      One place for Civil, MEP and Interior benchmarks.
+      Use it for conceptual budgets, feasibility studies and
+      preliminary estimates, not detailed BOQ pricing.
+    </p>
+
+    <div class="note">
+      The figures below are illustrative samples. Replace them
+      with benchmarks built from your historical project data,
+      vendor quotations, completed project records and market information.
+    </div>
+
+  </div>
+
+  <!-- =======================================================
+       SEARCH / FILTER
+       ======================================================= -->
+
+  <div class="tools">
+
+    <input
+      type="search"
+      id="q"
+      placeholder="Search system or discipline"
+      aria-label="Search benchmarks"
+    >
+
+    <select id="d" aria-label="Filter by discipline">
+      <option value="">All disciplines</option>
+    </select>
+
+  </div>
+
+  <p class="count" id="count" role="status"></p>
+
+  <!-- =======================================================
+       BENCHMARK TABLE
+       ======================================================= -->
+
+  <div class="tbl">
+
+    <table>
+
+      <thead>
+        <tr>
+          <th>System</th>
+          <th>Discipline</th>
+          <th>Unit</th>
+          <th class="r">Low (₹)</th>
+          <th class="r">High (₹)</th>
+          <th>Basis</th>
+          <th><span class="sm">Budget</span></th>
+        </tr>
+      </thead>
+
+      <tbody id="rows"></tbody>
+
+    </table>
+
+  </div>
+
+  <!-- =======================================================
+       QUICK BUDGET
+       ======================================================= -->
+
+  <h2>Quick budget</h2>
+
+  <p class="lead">
+    Add benchmarks, enter the quantity for each unit,
+    and read a low–high range.
+  </p>
+
+  <div class="tbl">
+
+    <table>
+
+      <thead>
+        <tr>
+          <th>System</th>
+          <th>Quantity</th>
+          <th class="r">Low (₹)</th>
+          <th class="r">High (₹)</th>
+          <th></th>
+        </tr>
+      </thead>
+
+      <tbody id="bud"></tbody>
+
+    </table>
+
+  </div>
+
+  <!-- =======================================================
+       CONTRIBUTOR ACCESS
+       ======================================================= -->
+
+  <p id="gate" class="note">
+    Viewing the repository and building a quick budget are open
+    to everyone. To add benchmarks, sign in with an account that
+    has contributor access.
+  </p>
+
+  <details id="add" hidden>
+
+    <summary>Add a benchmark</summary>
+
+    <form id="f">
+
+      <div>
+        <label for="fs">System</label>
+        <input
+          id="fs"
+          required
+          placeholder="e.g. Rooftop solar PV"
+        >
+      </div>
+
+      <div>
+        <label for="fd">Discipline</label>
+        <select id="fd"></select>
+      </div>
+
+      <div>
+        <label for="fu">Unit</label>
+        <input
+          id="fu"
+          required
+          placeholder="₹/kWp, ₹/sq ft"
+        >
+      </div>
+
+      <div>
+        <label for="fl">Low (₹)</label>
+        <input
+          id="fl"
+          type="number"
+          min="0"
+          step="any"
+          required
+        >
+      </div>
+
+      <div>
+        <label for="fh">High (₹)</label>
+        <input
+          id="fh"
+          type="number"
+          min="0"
+          step="any"
+          required
+        >
+      </div>
+
+      <div>
+        <label for="fb">Basis</label>
+        <select id="fb"></select>
+      </div>
+
+      <div>
+        <button class="primary" type="submit">
+          Add benchmark
+        </button>
+      </div>
+
+    </form>
+
+    <p id="fmsg">
+      Benchmarks you add are shared with everyone who opens this page.
+    </p>
+
+  </details>
+
 </main>
-<footer><div class="wrap">Site Ledger · One place for construction cost benchmarks</div></footer>
+
+<!-- =========================================================
+     FOOTER
+     ========================================================= -->
+
+<footer>
+
+  <div class="wrap footer-inner">
+
+    <div>
+      <strong>MyCosting</strong>
+      <br>
+      <span>Construction Cost Management</span>
+    </div>
+
+    <div>
+      Site Ledger · Cost Benchmark Repository
+    </div>
+
+  </div>
+
+</footer>
+
+
+<!-- =========================================================
+     JAVASCRIPT
+     ========================================================= -->
 
 <script>
+
 (function(){
-var D=["Civil","Interior","Electrical","HVAC","Public Health & Fire Fighting"];
-var B=["Historical project data","Vendor quotation","Completed project record","Market information"];
-var S=[
-["RCC framed structure, commercial","Civil","₹/sq ft built-up",1800,2400,0],
-["RCC framed structure, residential high-rise","Civil","₹/sq ft built-up",1700,2300,0],
-["Basement excavation and structure","Civil","₹/sq ft basement",2800,3800,2],
-["Facade, curtain wall and cladding","Civil","₹/sq ft facade",1800,4500,1],
-["External development and landscape","Civil","₹/sq ft site",300,600,0],
-["Office fit-out, standard","Interior","₹/sq ft carpet",1400,2000,2],
-["Office fit-out, premium","Interior","₹/sq ft carpet",2200,3500,2],
-["Retail fit-out","Interior","₹/sq ft carpet",1800,3000,0],
-["Hotel guest room, FF&E and fit-out","Interior","₹/key",1200000,2500000,1],
-["HT panels (11/22 kV)","Electrical","₹/panel",600000,1200000,1],
-["LT panels (PCC/MCC)","Electrical","₹/panel",350000,800000,1],
-["Transformers","Electrical","₹/kVA",2500,3500,1],
-["DG sets, silent, installed","Electrical","₹/kVA",5000,7500,1],
-["Indoor electrical works","Electrical","₹/sq ft built-up",180,320,0],
-["Outdoor electrical works","Electrical","₹/sq ft site",40,90,2],
-["VRV/VRF systems","HVAC","₹/TR",70000,110000,1],
-["Chillers and plant","HVAC","₹/TR",55000,85000,1],
-["AHUs","HVAC","₹/CFM",40,65,1],
-["FCUs","HVAC","₹/TR",20000,32000,1],
-["Ventilation systems","HVAC","₹/sq ft built-up",45,90,2],
-["Sewage treatment plant (STP)","Public Health & Fire Fighting","₹/KLD",45000,80000,2],
-["Water treatment plant (WTP)","Public Health & Fire Fighting","₹/KLD",20000,40000,1],
-["Water supply system","Public Health & Fire Fighting","₹/sq ft built-up",60,110,0],
-["Drainage system","Public Health & Fire Fighting","₹/sq ft built-up",55,100,0],
-["Fire fighting system","Public Health & Fire Fighting","₹/sq ft built-up",110,190,3]
+
+var D=[
+  "Civil",
+  "Interior",
+  "Electrical",
+  "HVAC",
+  "Public Health & Fire Fighting"
 ];
-S.forEach(function(r,i){r[6]="b"+i});
-var U=[],db=null,canW=false,uid=null,bud=[];
-var $=function(i){return document.getElementById(i)},fmt=new Intl.NumberFormat("en-IN");
-function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
-function fill(sel,a){a.forEach(function(x){var o=document.createElement("option");o.value=o.textContent=x;sel.appendChild(o)})}
-fill($("d"),D);fill($("fd"),D);fill($("fb"),B);
-function all(){return S.concat(U)}
-function find(k){return all().filter(function(r){return r[6]===k})[0]}
-function draw(){
-var q=$("q").value.trim().toLowerCase(),d=$("d").value,a=all();
-var list=a.filter(function(r){return(!d||r[1]===d)&&(!q||(r[0]+" "+r[1]).toLowerCase().indexOf(q)>-1)});
-$("rows").innerHTML=list.length?list.map(function(r){return"<tr><td>"+esc(r[0])+"</td><td>"+esc(r[1])+"</td><td>"+esc(r[2])+'</td><td class="r">'+fmt.format(r[3])+'</td><td class="r">'+fmt.format(r[4])+'</td><td class="sm">'+esc(B[r[5]]||r[5])+'</td><td><button data-a="'+esc(r[6])+'" aria-label="Add '+esc(r[0])+' to budget">Add</button></td></tr>'}).join(""):'<tr><td colspan="7" class="empty">No benchmarks match. Clear the search or choose another discipline.</td></tr>';
-$("count").textContent=list.length+" of "+a.length+" benchmarks";
-}
-function drawBud(){
-bud=bud.filter(function(b){return find(b.k)});
-if(!bud.length){$("bud").innerHTML='<tr><td colspan="5" class="empty">Nothing added yet. Choose Add on a benchmark above.</td></tr>';return}
-var h="";
-bud.forEach(function(b,k){var r=find(b.k);
-h+="<tr><td>"+esc(r[0])+'<div class="sm">'+esc(r[2])+'</div></td><td><input class="qty" type="number" min="0" step="any" value="'+b.q+'" data-q="'+k+'" aria-label="Quantity for '+esc(r[0])+'"></td><td class="r" id="l'+k+'"></td><td class="r" id="u'+k+'"></td><td><button data-x="'+k+'" aria-label="Remove">Remove</button></td></tr>'});
-h+='<tr class="tot"><td>Total range</td><td></td><td class="r" id="tl"></td><td class="r" id="tu"></td><td></td></tr>';
-$("bud").innerHTML=h;recalc();
-}
-function recalc(){var lo=0,hi=0;bud.forEach(function(b,k){var r=find(b.k),l=r[3]*b.q,u=r[4]*b.q;lo+=l;hi+=u;$("l"+k).textContent=fmt.format(Math.round(l));$("u"+k).textContent=fmt.format(Math.round(u))});$("tl").textContent=fmt.format(Math.round(lo));$("tu").textContent=fmt.format(Math.round(hi))}
-$("q").addEventListener("input",draw);$("d").addEventListener("change",draw);
-$("rows").addEventListener("click",function(e){var a=e.target.getAttribute("data-a");if(!a)return;if(!bud.some(function(b){return b.k===a}))bud.push({k:a,q:1});drawBud()});
-$("bud").addEventListener("input",function(e){var k=e.target.getAttribute("data-q");if(k===null)return;bud[+k].q=Math.max(0,+e.target.value||0);recalc()});
-$("bud").addEventListener("click",function(e){var k=e.target.getAttribute("data-x");if(k===null)return;bud.splice(+k,1);drawBud()});
-$("f").addEventListener("submit",function(e){
-e.preventDefault();
-var v={s:$("fs").value.trim(),d:$("fd").value,u:$("fu").value.trim(),lo:+$("fl").value,hi:+$("fh").value,b:$("fb").value};
-if(!db||!canW){$("fmsg").textContent="Sign in with contributor access to add benchmarks.";return}
-if(!v.s||!v.u){$("fmsg").textContent="Fill in the system and unit.";return}
-if(v.lo>v.hi){$("fmsg").textContent="The low value must not be above the high value.";return}
-v.by=uid;v.t=Date.now();
-db.collection("benchmarks").add(v).then(function(){$("f").reset();$("fmsg").textContent='Added "'+v.s+'". It is now visible to everyone.'}).catch(function(err){$("fmsg").textContent=(err&&err.code==="not_granted")?"Your account does not have contributor access.":"Could not save. Try again."});
+
+var B=[
+  "Historical project data",
+  "Vendor quotation",
+  "Completed project record",
+  "Market information"
+];
+
+var S=[
+
+  [
+    "RCC framed structure, commercial",
+    "Civil",
+    "₹/sq ft built-up",
+    1800,
+    2400,
+    0
+  ],
+
+  [
+    "RCC framed structure, residential high-rise",
+    "Civil",
+    "₹/sq ft built-up",
+    1700,
+    2300,
+    0
+  ],
+
+  [
+    "Basement excavation and structure",
+    "Civil",
+    "₹/sq ft basement",
+    2800,
+    3800,
+    2
+  ],
+
+  [
+    "Facade, curtain wall and cladding",
+    "Civil",
+    "₹/sq ft facade",
+    1800,
+    4500,
+    1
+  ],
+
+  [
+    "External development and landscape",
+    "Civil",
+    "₹/sq ft site",
+    300,
+    600,
+    0
+  ],
+
+  [
+    "Office fit-out, standard",
+    "Interior",
+    "₹/sq ft carpet",
+    1400,
+    2000,
+    2
+  ],
+
+  [
+    "Office fit-out, premium",
+    "Interior",
+    "₹/sq ft carpet",
+    2200,
+    3500,
+    2
+  ],
+
+  [
+    "Retail fit-out",
+    "Interior",
+    "₹/sq ft carpet",
+    1800,
+    3000,
+    0
+  ],
+
+  [
+    "Hotel guest room, FF&E and fit-out",
+    "Interior",
+    "₹/key",
+    1200000,
+    2500000,
+    1
+  ],
+
+  [
+    "HT panels (11/22 kV)",
+    "Electrical",
+    "₹/panel",
+    600000,
+    1200000,
+    1
+  ],
+
+  [
+    "LT panels (PCC/MCC)",
+    "Electrical",
+    "₹/panel",
+    350000,
+    800000,
+    1
+  ],
+
+  [
+    "Transformers",
+    "Electrical",
+    "₹/kVA",
+    2500,
+    3500,
+    1
+  ],
+
+  [
+    "DG sets, silent, installed",
+    "Electrical",
+    "₹/kVA",
+    5000,
+    7500,
+    1
+  ],
+
+  [
+    "Indoor electrical works",
+    "Electrical",
+    "₹/sq ft built-up",
+    180,
+    320,
+    0
+  ],
+
+  [
+    "Outdoor electrical works",
+    "Electrical",
+    "₹/sq ft site",
+    40,
+    90,
+    2
+  ],
+
+  [
+    "VRV/VRF systems",
+    "HVAC",
+    "₹/TR",
+    70000,
+    110000,
+    1
+  ],
+
+  [
+    "Chillers and plant",
+    "HVAC",
+    "₹/TR",
+    55000,
+    85000,
+    1
+  ],
+
+  [
+    "AHUs",
+    "HVAC",
+    "₹/CFM",
+    40,
+    65,
+    1
+  ],
+
+  [
+    "FCUs",
+    "HVAC",
+    "₹/TR",
+    20000,
+    32000,
+    1
+  ],
+
+  [
+    "Ventilation systems",
+    "HVAC",
+    "₹/sq ft built-up",
+    45,
+    90,
+    2
+  ],
+
+  [
+    "Sewage treatment plant (STP)",
+    "Public Health & Fire Fighting",
+    "₹/KLD",
+    45000,
+    80000,
+    2
+  ],
+
+  [
+    "Water treatment plant (WTP)",
+    "Public Health & Fire Fighting",
+    "₹/KLD",
+    20000,
+    40000,
+    1
+  ],
+
+  [
+    "Water supply system",
+    "Public Health & Fire Fighting",
+    "₹/sq ft built-up",
+    60,
+    110,
+    0
+  ],
+
+  [
+    "Drainage system",
+    "Public Health & Fire Fighting",
+    "₹/sq ft built-up",
+    55,
+    100,
+    0
+  ],
+
+  [
+    "Fire fighting system",
+    "Public Health & Fire Fighting",
+    "₹/sq ft built-up",
+    110,
+    190,
+    3
+  ]
+
+];
+
+S.forEach(function(r,i){
+  r[6]="b"+i;
 });
-function status(){$("st").textContent=db?"· Live shared repository":"· Showing baseline benchmarks";$("add").hidden=!canW;$("gate").hidden=canW}
-function ok(v){return v&&typeof v.s==="string"&&v.s&&D.indexOf(v.d)>-1&&typeof v.u==="string"&&isFinite(v.lo)&&isFinite(v.hi)&&v.lo>=0&&v.hi>=v.lo}
-draw();drawBud();status();
-(async function(){
-try{
-if(!window.claude||!claude.use)return;
-var d=await claude.use("db"),u=await claude.use("user");
-db=d;
-if(u){uid=await u.id();canW=!!d&&u.can("data.write")!==false}
-if(d){d.collection("benchmarks").onSnapshot(function(s){
-U=s.docs.map(function(x){var v=x.data()||{};return ok(v)?[v.s,v.d,v.u,+v.lo,+v.hi,B.indexOf(v.b)>-1?B.indexOf(v.b):3,x.id]:null}).filter(Boolean);
-draw();drawBud()},function(){});}
-}catch(e){}
+
+var U=[],
+    db=null,
+    canW=false,
+    uid=null,
+    bud=[];
+
+var $=function(i){
+  return document.getElementById(i);
+};
+
+var fmt=new Intl.NumberFormat("en-IN");
+
+function esc(s){
+
+  return String(s).replace(
+    /[&<>"]/g,
+    function(c){
+      return {
+        "&":"&amp;",
+        "<":"&lt;",
+        ">":"&gt;",
+        '"':"&quot;"
+      }[c];
+    }
+  );
+
+}
+
+function fill(sel,a){
+
+  a.forEach(function(x){
+
+    var o=document.createElement("option");
+
+    o.value=x;
+    o.textContent=x;
+
+    sel.appendChild(o);
+
+  });
+
+}
+
+fill($("d"),D);
+fill($("fd"),D);
+fill($("fb"),B);
+
+function all(){
+
+  return S.concat(U);
+
+}
+
+function find(k){
+
+  return all().filter(function(r){
+    return r[6]===k;
+  })[0];
+
+}
+
+function draw(){
+
+  var q=$("q").value.trim().toLowerCase();
+  var d=$("d").value;
+  var a=all();
+
+  var list=a.filter(function(r){
+
+    return (
+      (!d || r[1]===d) &&
+      (
+        !q ||
+        (r[0]+" "+r[1])
+          .toLowerCase()
+          .indexOf(q)>-1
+      )
+    );
+
+  });
+
+  $("rows").innerHTML=list.length?
+
+    list.map(function(r){
+
+      return "<tr>"+
+
+        "<td>"+esc(r[0])+"</td>"+
+
+        "<td>"+esc(r[1])+"</td>"+
+
+        "<td>"+esc(r[2])+"</td>"+
+
+        '<td class="r">'+fmt.format(r[3])+"</td>"+
+
+        '<td class="r">'+fmt.format(r[4])+"</td>"+
+
+        '<td class="sm">'+
+        esc(B[r[5]]||r[5])+
+        "</td>"+
+
+        "<td>"+
+
+        '<button class="add-btn" '+
+        'data-a="'+esc(r[6])+'" '+
+        'aria-label="Add '+esc(r[0])+
+        ' to budget">Add</button>'+
+
+        "</td>"+
+
+        "</tr>";
+
+    }).join("")
+
+    :
+
+    '<tr><td colspan="7" class="empty">'+
+    'No benchmarks match. Clear the search or choose another discipline.'+
+    "</td></tr>";
+
+  $("count").textContent=
+    list.length+" of "+a.length+" benchmarks";
+
+}
+
+function drawBud(){
+
+  bud=bud.filter(function(b){
+    return find(b.k);
+  });
+
+  if(!bud.length){
+
+    $("bud").innerHTML=
+      '<tr><td colspan="5" class="empty">'+
+      'Nothing added yet. Choose Add on a benchmark above.'+
+      "</td></tr>";
+
+    return;
+
+  }
+
+  var h="";
+
+  bud.forEach(function(b,k){
+
+    var r=find(b.k);
+
+    h+=
+      "<tr>"+
+
+      "<td>"+
+      esc(r[0])+
+      '<div class="sm">'+
+      esc(r[2])+
+      "</div>"+
+      "</td>"+
+
+      "<td>"+
+      '<input class="qty" '+
+      'type="number" min="0" step="any" '+
+      'value="'+b.q+'" '+
+      'data-q="'+k+'" '+
+      'aria-label="Quantity for '+
+      esc(r[0])+'">'+
+      "</td>"+
+
+      '<td class="r" id="l'+k+'"></td>'+
+
+      '<td class="r" id="u'+k+'"></td>'+
+
+      "<td>"+
+      '<button data-x="'+k+'" '+
+      'aria-label="Remove">Remove</button>'+
+      "</td>"+
+
+      "</tr>";
+
+  });
+
+  h+=
+    '<tr class="tot">'+
+    "<td>Total range</td>"+
+    "<td></td>"+
+    '<td class="r" id="tl"></td>'+
+    '<td class="r" id="tu"></td>'+
+    "<td></td>"+
+    "</tr>";
+
+  $("bud").innerHTML=h;
+
+  recalc();
+
+}
+
+function recalc(){
+
+  var lo=0,
+      hi=0;
+
+  bud.forEach(function(b,k){
+
+    var r=find(b.k);
+
+    var l=r[3]*b.q;
+    var u=r[4]*b.q;
+
+    lo+=l;
+    hi+=u;
+
+    $("l"+k).textContent=
+      fmt.format(Math.round(l));
+
+    $("u"+k).textContent=
+      fmt.format(Math.round(u));
+
+  });
+
+  $("tl").textContent=
+    fmt.format(Math.round(lo));
+
+  $("tu").textContent=
+    fmt.format(Math.round(hi));
+
+}
+
+$("q").addEventListener(
+  "input",
+  draw
+);
+
+$("d").addEventListener(
+  "change",
+  draw
+);
+
+$("rows").addEventListener(
+  "click",
+  function(e){
+
+    var a=e.target.getAttribute("data-a");
+
+    if(!a)return;
+
+    if(!bud.some(function(b){
+      return b.k===a;
+    })){
+      bud.push({
+        k:a,
+        q:1
+      });
+    }
+
+    drawBud();
+
+  }
+);
+
+$("bud").addEventListener(
+  "input",
+  function(e){
+
+    var k=e.target.getAttribute("data-q");
+
+    if(k===null)return;
+
+    bud[+k].q=
+      Math.max(
+        0,
+        +e.target.value||0
+      );
+
+    recalc();
+
+  }
+);
+
+$("bud").addEventListener(
+  "click",
+  function(e){
+
+    var k=e.target.getAttribute("data-x");
+
+    if(k===null)return;
+
+    bud.splice(+k,1);
+
+    drawBud();
+
+  }
+);
+
+$("f").addEventListener(
+  "submit",
+  function(e){
+
+    e.preventDefault();
+
+    var v={
+      s:$("fs").value.trim(),
+      d:$("fd").value,
+      u:$("fu").value.trim(),
+      lo:+$("fl").value,
+      hi:+$("fh").value,
+      b:$("fb").value
+    };
+
+    if(!db || !canW){
+
+      $("fmsg").textContent=
+        "Sign in with contributor access to add benchmarks.";
+
+      return;
+
+    }
+
+    if(!v.s || !v.u){
+
+      $("fmsg").textContent=
+        "Fill in the system and unit.";
+
+      return;
+
+    }
+
+    if(v.lo>v.hi){
+
+      $("fmsg").textContent=
+        "The low value must not be above the high value.";
+
+      return;
+
+    }
+
+    v.by=uid;
+    v.t=Date.now();
+
+    db.collection("benchmarks")
+      .add(v)
+      .then(function(){
+
+        $("f").reset();
+
+        $("fmsg").textContent=
+          'Added "'+
+          v.s+
+          '". It is now visible to everyone.';
+
+      })
+      .catch(function(err){
+
+        $("fmsg").textContent=
+          (
+            err &&
+            err.code==="not_granted"
+          )
+          ?
+          "Your account does not have contributor access."
+          :
+          "Could not save. Try again.";
+
+      });
+
+  }
+);
+
+function status(){
+
+  $("st").textContent=
+    db
+    ?
+    "· Live shared repository"
+    :
+    "· Showing baseline benchmarks";
+
+  $("add").hidden=!canW;
+  $("gate").hidden=canW;
+
+}
+
+function ok(v){
+
+  return v &&
+    typeof v.s==="string" &&
+    v.s &&
+    D.indexOf(v.d)>-1 &&
+    typeof v.u==="string" &&
+    isFinite(v.lo) &&
+    isFinite(v.hi) &&
+    v.lo>=0 &&
+    v.hi>=v.lo;
+
+}
+
+draw();
+drawBud();
 status();
+
+(async function(){
+
+  try{
+
+    if(!window.claude || !claude.use)return;
+
+    var d=await claude.use("db");
+    var u=await claude.use("user");
+
+    db=d;
+
+    if(u){
+
+      uid=await u.id();
+
+      canW=
+        !!d &&
+        u.can("data.write")!==false;
+
+    }
+
+    if(d){
+
+      d.collection("benchmarks")
+        .onSnapshot(
+
+          function(s){
+
+            U=s.docs
+              .map(function(x){
+
+                var v=x.data()||{};
+
+                return ok(v)
+                  ?
+                  [
+                    v.s,
+                    v.d,
+                    v.u,
+                    +v.lo,
+                    +v.hi,
+                    B.indexOf(v.b)>-1
+                      ?
+                      B.indexOf(v.b)
+                      :
+                      3,
+                    x.id
+                  ]
+                  :
+                  null;
+
+              })
+              .filter(Boolean);
+
+            draw();
+            drawBud();
+
+          },
+
+          function(){}
+
+        );
+
+    }
+
+  }catch(e){}
+
+  status();
+
 })();
+
 })();
+
 </script>
+
 </body>
 </html>
