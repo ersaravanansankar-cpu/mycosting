@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rate Analysis</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Serif:wght@600&display=swap">
+<style>
+:root{--bg:#eef1f4;--panel:#fff;--ink:#14233b;--mute:#5d6b80;--line:#d3dae3;--acc:#0f6b6b;--brass:#b8872b;--danger:#b3261e;--r:6px}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#0f1824;--panel:#172335;--ink:#e6ecf4;--mute:#93a1b5;--line:#2a3a52;--acc:#4fc3c3;--brass:#e0b457;--danger:#ff8a80}}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:15px/1.5 "IBM Plex Sans",system-ui,Arial,sans-serif}
+nav{display:flex;gap:4px;flex-wrap:wrap;align-items:center;background:var(--ink);padding:10px 20px}
+nav b{font-family:"IBM Plex Serif",Georgia,serif;color:#fff;margin-right:18px}
+nav a{color:#c5d0df;text-decoration:none;padding:6px 12px;border-radius:var(--r)}
+nav a:hover{background:#ffffff1f}
+nav a.on{background:var(--brass);color:#14233b;font-weight:600}
+main{max-width:1100px;margin:0 auto;padding:22px 16px 60px;display:grid;grid-template-columns:230px 1fr;gap:20px}
+@media(max-width:800px){main{grid-template-columns:1fr}}
+h1{font:600 22px "IBM Plex Serif",Georgia,serif;margin:0 0 4px}
+aside,.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r)}
+aside{padding:12px;align-self:start}
+aside h2{font-size:14px;margin:0 0 8px}
+.li{display:flex;justify-content:space-between;gap:8px;padding:8px;border-radius:var(--r);cursor:pointer;border:1px solid transparent}
+.li:hover{background:var(--bg)}
+.li.on{border-color:var(--acc);background:var(--bg)}
+.li small{color:var(--mute);white-space:nowrap}
+.card{padding:16px;margin-bottom:16px}
+label{font-size:13px;color:var(--mute);display:block;margin-bottom:3px}
+input,select{width:100%;font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:7px 8px}
+input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid var(--acc);outline-offset:1px}
+.g{display:grid;grid-template-columns:2fr 1fr 1fr;gap:12px}
+@media(max-width:600px){.g{grid-template-columns:1fr}}
+.tw{overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:640px}
+th,td{padding:5px 6px;border-bottom:1px solid var(--line);text-align:left}
+th{font-size:13px;color:var(--mute);font-weight:500}
+td.n,th.n{text-align:right}
+td input{padding:5px 6px}
+td input.n{text-align:right}
+tr.cat td{background:var(--bg);font-weight:600;color:var(--acc)}
+.amt{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+button{font:inherit;cursor:pointer;border-radius:var(--r);border:1px solid var(--line);background:var(--panel);color:var(--ink);padding:7px 12px}
+button.p{background:var(--acc);border-color:var(--acc);color:#fff}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]) button.p{color:#0f1824}}
+button.x{border:0;background:none;color:var(--danger);padding:4px 8px}
+.bar{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.sum{max-width:380px;margin-left:auto}
+.sum div{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--line)}
+.sum input{width:70px;text-align:right}
+.sum .tot{border:0;border-top:2px solid var(--ink);margin-top:6px;padding-top:10px;font-size:18px;font-weight:600}
+.empty{color:var(--mute);padding:20px;text-align:center}
+@media print{nav,aside,.bar,button.x{display:none}main{display:block}body{background:#fff;color:#000}}
+</style>
+</head>
+<body>
+<nav>
+  <b>Rate Analysis</b>
+  <a href="boq.html">BOQ</a>
+  <a href="projects.html">Projects</a>
+  <a href="rate-analysis.html" class="on" aria-current="page">Rate Analysis</a>
+  <a href="reports.html">Reports</a>
+  <a href="settings.html">Settings</a>
+</nav>
+
+<main>
+  <aside>
+    <h2>Analyses</h2>
+    <div id="list"></div>
+    <div class="bar"><button class="p" id="add">New analysis</button></div>
+  </aside>
+
+  <section id="work"></section>
+</main>
+
+<script>
+/* Storage key. If your Vercel app already has a database or API, replace load()/save() below. */
+var KEY = "rateAnalysis.v1";
+var CATS = ["Material", "Labour", "Equipment"];
+var S = { items: [], cur: null };
+
+function uid(){ return "r" + Math.random().toString(36).slice(2, 9); }
+function num(v){ var n = parseFloat(v); return isNaN(n) ? 0 : n; }
+function money(v){ return (Math.round(v * 100) / 100).toLocaleString("en-IN", {minimumFractionDigits: 2, maximumFractionDigits: 2}); }
+function esc(s){ return String(s == null ? "" : s).replace(/[&<>"]/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]; }); }
+
+function load(){
+  try { var d = JSON.parse(localStorage.getItem(KEY)); if (d && d.items) S = d; } catch(e){}
+  if (!S.items.length) { S.items = [sample()]; S.cur = S.items[0].id; }
+  if (!S.items.some(function(i){ return i.id === S.cur; })) S.cur = S.items[0].id;
+}
+function save(){ try { localStorage.setItem(KEY, JSON.stringify(S)); } catch(e){} }
+
+function blank(){
+  return { id: uid(), code: "", name: "New analysis", unit: "cum", output: 1, oh: 15, profit: 10, lines: [] };
+}
+function sample(){
+  var L = function(c, d, u, q, r){ return { id: uid(), cat: c, desc: d, unit: u, qty: q, rate: r }; };
+  return { id: uid(), code: "RA-001", name: "RCC M25 in columns (sample)", unit: "cum", output: 1, oh: 15, profit: 10, lines: [
+    L("Material", "Cement", "bag", 8.2, 380), L("Material", "Sand", "cum", 0.44, 1800),
+    L("Material", "Aggregate 20mm", "cum", 0.88, 1500), L("Material", "Steel (Fe500)", "kg", 110, 68),
+    L("Labour", "Mason", "day", 0.9, 900), L("Labour", "Mazdoor", "day", 4, 650),
+    L("Equipment", "Mixer and vibrator", "hr", 2, 350)
+  ]};
+}
+function cur(){ return S.items.filter(function(i){ return i.id === S.cur; })[0]; }
+
+function calc(a){
+  var by = {}, direct = 0;
+  CATS.forEach(function(c){ by[c] = 0; });
+  a.lines.forEach(function(l){ var v = num(l.qty) * num(l.rate); by[l.cat] = (by[l.cat] || 0) + v; direct += v; });
+  var oh = direct * num(a.oh) / 100, pr = (direct + oh) * num(a.profit) / 100;
+  var total = direct + oh + pr, out = num(a.output) || 1;
+  return { by: by, direct: direct, oh: oh, pr: pr, total: total, rate: total / out };
+}
+
+function drawList(){
+  var h = S.items.map(function(a){
+    return '<div class="li' + (a.id === S.cur ? " on" : "") + '" data-id="' + a.id + '"><span>' + esc(a.name) + '</span><small>' + money(calc(a).rate) + '</small></div>';
+  }).join("");
+  document.getElementById("list").innerHTML = h;
+}
+
+function draw(){
+  drawList();
+  var a = cur(), c = calc(a), h = "";
+  h += '<div class="card"><h1>' + esc(a.name) + '</h1>';
+  h += '<div class="g" style="margin-top:12px"><div><label>Item description</label><input data-f="name" value="' + esc(a.name) + '"></div>';
+  h += '<div><label>Code</label><input data-f="code" value="' + esc(a.code) + '"></div>';
+  h += '<div><label>Analysis for quantity</label><input type="number" min="0" step="any" data-f="output" value="' + esc(a.output) + '"></div>';
+  h += '<div><label>Unit of rate</label><input data-f="unit" value="' + esc(a.unit) + '"></div></div></div>';
+
+  h += '<div class="card"><div class="tw"><table><thead><tr><th>Resource</th><th>Type</th><th>Unit</th><th class="n">Qty</th><th class="n">Rate (₹)</th><th class="n">Amount (₹)</th><th></th></tr></thead><tbody>';
+  if (!a.lines.length) h += '<tr><td colspan="7" class="empty">No resources yet. Add materials, labour or equipment.</td></tr>';
+  CATS.forEach(function(cat){
+    var rows = a.lines.filter(function(l){ return l.cat === cat; });
+    if (!rows.length) return;
+    h += '<tr class="cat"><td colspan="5">' + cat + '</td><td class="amt">' + money(c.by[cat]) + '</td><td></td></tr>';
+    rows.forEach(function(l){
+      h += '<tr data-l="' + l.id + '"><td><input data-k="desc" value="' + esc(l.desc) + '"></td>';
+      h += '<td><select data-k="cat">' + CATS.map(function(x){ return '<option' + (x === l.cat ? " selected" : "") + '>' + x + '</option>'; }).join("") + '</select></td>';
+      h += '<td><input data-k="unit" value="' + esc(l.unit) + '" style="width:64px"></td>';
+      h += '<td><input class="n" type="number" step="any" data-k="qty" value="' + esc(l.qty) + '" style="width:80px"></td>';
+      h += '<td><input class="n" type="number" step="any" data-k="rate" value="' + esc(l.rate) + '" style="width:96px"></td>';
+      h += '<td class="amt" data-amt>' + money(num(l.qty) * num(l.rate)) + '</td>';
+      h += '<td><button class="x" data-del aria-label="Remove resource">Remove</button></td></tr>';
+    });
+  });
+  h += '</tbody></table></div>';
+  h += '<div class="bar"><button class="p" data-addline="Material">Add material</button><button data-addline="Labour">Add labour</button><button data-addline="Equipment">Add equipment</button></div></div>';
+
+  h += '<div class="card"><div class="sum" id="sum">' + sumHtml(a, c) + '</div>';
+  h += '<div class="bar"><button id="dup">Duplicate</button><button id="csv">Export CSV</button><button id="print">Print</button><button class="x" id="delA">Delete analysis</button></div></div>';
+  document.getElementById("work").innerHTML = h;
+}
+
+function sumHtml(a, c){
+  var s = "";
+  CATS.forEach(function(k){ s += '<div><span>' + k + '</span><span>' + money(c.by[k]) + '</span></div>'; });
+  s += '<div><b>Direct cost</b><b>' + money(c.direct) + '</b></div>';
+  s += '<div><span>Overheads <input type="number" step="any" data-f="oh" value="' + esc(a.oh) + '" aria-label="Overheads percent"> %</span><span>' + money(c.oh) + '</span></div>';
+  s += '<div><span>Profit <input type="number" step="any" data-f="profit" value="' + esc(a.profit) + '" aria-label="Profit percent"> %</span><span>' + money(c.pr) + '</span></div>';
+  s += '<div><b>Total for ' + esc(a.output) + ' ' + esc(a.unit) + '</b><b>' + money(c.total) + '</b></div>';
+  s += '<div class="tot"><span>Rate per ' + esc(a.unit) + '</span><span>₹ ' + money(c.rate) + '</span></div>';
+  return s;
+}
+
+/* Live update without losing input focus */
+function refresh(){
+  var a = cur(), c = calc(a);
+  var sm = document.getElementById("sum");
+  var f = document.activeElement, keep = f && f.getAttribute && f.getAttribute("data-f");
+  if (keep === "oh" || keep === "profit") {
+    var cells = sm.querySelectorAll("div > span:last-child, div > b:last-child");
+    cells; /* amounts update below */
+  }
+  sm.innerHTML = sumHtml(a, c);
+  if (keep === "oh" || keep === "profit") { var n = sm.querySelector('[data-f="' + keep + '"]'); n.focus(); n.setSelectionRange && 0; }
+  a.lines.forEach(function(l){
+    var tr = document.querySelector('tr[data-l="' + l.id + '"]');
+    if (tr) tr.querySelector("[data-amt]").textContent = money(num(l.qty) * num(l.rate));
+  });
+  drawList();
+}
+
+document.addEventListener("input", function(e){
+  var t = e.target, a = cur();
+  if (t.getAttribute("data-f")) {
+    var f = t.getAttribute("data-f");
+    a[f] = (f === "name" || f === "code" || f === "unit") ? t.value : t.value;
+    save(); refresh();
+    if (f === "name") document.querySelector("h1").textContent = a.name;
+  } else if (t.getAttribute("data-k")) {
+    var id = t.closest("tr").getAttribute("data-l");
+    var l = a.lines.filter(function(x){ return x.id === id; })[0];
+    l[t.getAttribute("data-k")] = t.value;
+    save();
+    if (t.getAttribute("data-k") === "cat") { draw(); } else { refresh(); }
+  }
+});
+
+document.addEventListener("click", function(e){
+  var t = e.target, a = cur();
+  var li = t.closest(".li");
+  if (li) { S.cur = li.getAttribute("data-id"); save(); draw(); return; }
+  if (t.id === "add") { var n = blank(); S.items.push(n); S.cur = n.id; save(); draw(); return; }
+  var al = t.getAttribute("data-addline");
+  if (al) { a.lines.push({ id: uid(), cat: al, desc: "", unit: "", qty: 0, rate: 0 }); save(); draw(); return; }
+  if (t.hasAttribute("data-del")) {
+    var id = t.closest("tr").getAttribute("data-l");
+    a.lines = a.lines.filter(function(x){ return x.id !== id; }); save(); draw(); return;
+  }
+  if (t.id === "dup") {
+    var cp = JSON.parse(JSON.stringify(a)); cp.id = uid(); cp.name = a.name + " (copy)";
+    cp.lines.forEach(function(l){ l.id = uid(); });
+    S.items.push(cp); S.cur = cp.id; save(); draw(); return;
+  }
+  if (t.id === "delA") {
+    if (!confirm("Delete this analysis?")) return;
+    S.items = S.items.filter(function(i){ return i.id !== a.id; });
+    if (!S.items.length) S.items.push(blank());
+    S.cur = S.items[0].id; save(); draw(); return;
+  }
+  if (t.id === "print") { window.print(); return; }
+  if (t.id === "csv") {
+    var c = calc(a), q = function(v){ return '"' + String(v).replace(/"/g, '""') + '"'; };
+    var rows = [["Code", a.code], ["Item", a.name], ["Quantity", a.output], ["Unit", a.unit], [], ["Type", "Resource", "Unit", "Qty", "Rate", "Amount"]];
+    a.lines.forEach(function(l){ rows.push([l.cat, l.desc, l.unit, l.qty, l.rate, num(l.qty) * num(l.rate)]); });
+    rows.push([], ["Direct cost", c.direct], ["Overheads %", a.oh, c.oh], ["Profit %", a.profit, c.pr], ["Total", c.total], ["Rate per " + a.unit, c.rate]);
+    var blob = new Blob([rows.map(function(r){ return r.map(q).join(","); }).join("\n")], { type: "text/csv" });
+    var u = document.createElement("a"); u.href = URL.createObjectURL(blob);
+    u.download = (a.code || "rate-analysis") + ".csv"; u.click(); URL.revokeObjectURL(u.href);
+  }
+});
+
+load(); draw();
+</script>
+</body>
+</html>
