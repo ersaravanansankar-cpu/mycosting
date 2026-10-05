@@ -10,19 +10,20 @@
 
 <style>
 :root{
-  --bg:#eef0f1;
-  --panel:#fff;
+  --bg:#eef1f3;
+  --panel:#ffffff;
   --ink:#17232e;
-  --mute:#556470;
-  --line:#cfd5d9;
+  --mute:#64727d;
+  --line:#d6dce0;
   --accent:#0f7b8a;
-  --hi:#e3f2f4;
-  --onacc:#fff;
-  --shadow:0 2px 8px rgba(23,35,46,.06);
+  --accent-dark:#0b6673;
+  --hi:#e5f3f5;
+  --onacc:#ffffff;
+  --success:#2e7d32;
+  --danger:#b42318;
+  --shadow:0 2px 10px rgba(23,35,46,.07);
 
   box-sizing:border-box;
-  padding-top:env(safe-area-inset-top,0px);
-  padding-bottom:env(safe-area-inset-bottom,0px);
 }
 
 @media (prefers-color-scheme:dark){
@@ -33,241 +34,417 @@
     --mute:#9aa8b3;
     --line:#2f3d48;
     --accent:#4cc3d3;
+    --accent-dark:#35a9b9;
     --hi:#1f3a42;
     --onacc:#0b1a1e;
-    --shadow:0 2px 8px rgba(0,0,0,.2);
+    --shadow:0 2px 10px rgba(0,0,0,.22);
   }
-}
-
-:root[data-theme="dark"]{
-  --bg:#121a21;
-  --panel:#1b262f;
-  --ink:#e8edf0;
-  --mute:#9aa8b3;
-  --line:#2f3d48;
-  --accent:#4cc3d3;
-  --hi:#1f3a42;
-  --onacc:#0b1a1e;
-  --shadow:0 2px 8px rgba(0,0,0,.2);
-}
-
-html{
-  scroll-padding-top:env(safe-area-inset-top,0px);
 }
 
 *{
   box-sizing:border-box;
 }
 
+html{
+  scroll-behavior:smooth;
+}
+
 body{
   margin:0;
   background:var(--bg);
   color:var(--ink);
-  font:400 17px/1.5 "Source Sans 3",system-ui,sans-serif;
+  font:400 16px/1.5 "Source Sans 3",system-ui,sans-serif;
 }
 
-h1,h2{
+h1,h2,h3{
   font-family:Archivo,system-ui,sans-serif;
   margin:0;
-  line-height:1.1;
+  line-height:1.15;
+}
+
+button,
+input,
+select{
+  font:inherit;
+}
+
+button{
+  cursor:pointer;
 }
 
 .wrap{
-  max-width:1100px;
-  margin:0 auto;
-  padding:0 20px;
+  width:min(1180px,calc(100% - 32px));
+  margin:auto;
 }
 
 /* =========================================================
-   HEADER / NAVIGATION
+   HEADER
    ========================================================= */
 
 header{
   position:sticky;
   top:0;
-  z-index:100;
+  z-index:1000;
   background:var(--panel);
   border-bottom:1px solid var(--line);
   box-shadow:var(--shadow);
 }
 
 .nav{
-  min-height:68px;
+  min-height:72px;
   display:flex;
   align-items:center;
-  justify-content:space-between;
-  gap:24px;
+  gap:28px;
 }
 
 .brand{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  min-width:190px;
+  flex:0 0 auto;
 }
 
 .brand-main{
-  font:800 22px Archivo,sans-serif;
-  letter-spacing:-.02em;
-  color:var(--ink);
+  font:800 23px Archivo,sans-serif;
+  letter-spacing:-.03em;
 }
 
 .brand-sub{
-  display:block;
-  font:500 11px "Source Sans 3",sans-serif;
   color:var(--mute);
+  font-size:11px;
   margin-top:-2px;
-  letter-spacing:.03em;
-}
-
-.status{
-  font-size:13px;
-  color:var(--mute);
-  white-space:nowrap;
+  letter-spacing:.04em;
 }
 
 .main-nav{
+  flex:1;
   display:flex;
   align-items:center;
-  gap:4px;
-  flex-wrap:wrap;
+  gap:3px;
 }
 
 .main-nav a{
-  display:inline-flex;
-  align-items:center;
-  gap:6px;
   color:var(--ink);
   text-decoration:none;
-  padding:9px 12px;
-  border:1px solid transparent;
+  padding:9px 11px;
   border-radius:5px;
-  font:600 15px "Source Sans 3",sans-serif;
-  transition:.15s ease;
+  font-weight:600;
+  white-space:nowrap;
+  transition:.15s;
 }
 
 .main-nav a:hover{
   background:var(--hi);
-  border-color:var(--line);
 }
 
 .main-nav a.active{
   background:var(--accent);
   color:var(--onacc);
-  border-color:var(--accent);
-}
-
-.nav-icon{
-  font-size:15px;
-  line-height:1;
 }
 
 /* =========================================================
-   PAGE CONTENT
+   USER AREA
    ========================================================= */
 
-.intro{
-  padding:44px 0 20px;
+.user-area{
+  position:relative;
+  flex:0 0 auto;
 }
 
-.intro h1{
-  font-size:clamp(32px,5vw,50px);
-  font-weight:800;
-  letter-spacing:-.02em;
-  max-width:20ch;
-}
-
-.intro p{
-  color:var(--mute);
-  max-width:70ch;
-  margin:14px 0 0;
-}
-
-.note{
-  margin-top:14px;
-  padding:10px 14px;
-  background:var(--hi);
-  border-left:4px solid var(--accent);
-  border-radius:3px;
-  font-size:15px;
-  max-width:75ch;
-}
-
-/* =========================================================
-   TOOLS
-   ========================================================= */
-
-input,
-select,
-button{
-  font:inherit;
-  color:var(--ink);
-  background:var(--panel);
-  border:1px solid var(--line);
-  border-radius:4px;
-  padding:9px 11px;
-}
-
-.tools{
+.signin-btn{
   display:flex;
-  gap:10px;
-  flex-wrap:wrap;
-  margin:22px 0 10px;
-}
-
-input[type=search]{
-  flex:1 1 220px;
-}
-
-button{
-  cursor:pointer;
-  transition:.15s ease;
-}
-
-button:hover{
-  border-color:var(--accent);
-}
-
-button.primary{
-  background:var(--accent);
-  color:var(--onacc);
-  border-color:var(--accent);
+  align-items:center;
+  gap:8px;
+  border:1px solid var(--line);
+  background:var(--panel);
+  color:var(--ink);
+  border-radius:6px;
+  padding:8px 11px;
   font-weight:600;
 }
 
-:focus-visible{
-  outline:3px solid var(--accent);
-  outline-offset:2px;
+.signin-btn:hover{
+  border-color:var(--accent);
 }
 
-.count{
+.avatar{
+  width:30px;
+  height:30px;
+  border-radius:50%;
+  background:var(--accent);
+  color:var(--onacc);
+  display:grid;
+  place-items:center;
+  font:700 13px Archivo,sans-serif;
+}
+
+.user-name{
+  max-width:120px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.profile-menu{
+  display:none;
+  position:absolute;
+  right:0;
+  top:calc(100% + 9px);
+  width:260px;
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:8px;
+  box-shadow:0 10px 30px rgba(0,0,0,.12);
+  overflow:hidden;
+}
+
+.profile-menu.open{
+  display:block;
+}
+
+.profile-top{
+  padding:16px;
+  border-bottom:1px solid var(--line);
+}
+
+.profile-top strong{
+  display:block;
+}
+
+.profile-email{
   color:var(--mute);
-  font-size:15px;
-  margin:0 0 8px;
+  font-size:13px;
+  margin-top:2px;
+  word-break:break-word;
+}
+
+.profile-role{
+  display:inline-block;
+  margin-top:9px;
+  padding:3px 7px;
+  border-radius:4px;
+  background:var(--hi);
+  color:var(--accent);
+  font-size:12px;
+  font-weight:700;
+}
+
+.profile-menu button{
+  width:100%;
+  text-align:left;
+  border:0;
+  border-radius:0;
+  background:transparent;
+  padding:11px 16px;
+  color:var(--ink);
+}
+
+.profile-menu button:hover{
+  background:var(--hi);
 }
 
 /* =========================================================
-   TABLES
+   MAIN
    ========================================================= */
 
-.tbl{
-  overflow-x:auto;
+main{
+  padding-bottom:60px;
+}
+
+.dashboard-head{
+  padding:42px 0 26px;
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap:20px;
+}
+
+.dashboard-kicker{
+  color:var(--accent);
+  font-weight:700;
+  font-size:13px;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+}
+
+.dashboard-head h1{
+  font-size:clamp(30px,5vw,44px);
+  margin-top:4px;
+}
+
+.dashboard-head p{
+  color:var(--mute);
+  max-width:650px;
+  margin:10px 0 0;
+}
+
+.head-actions{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+
+.btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:7px;
+  border:1px solid var(--line);
+  background:var(--panel);
+  color:var(--ink);
+  padding:9px 13px;
+  border-radius:5px;
+  text-decoration:none;
+  font-weight:600;
+}
+
+.btn:hover{
+  border-color:var(--accent);
+}
+
+.btn.primary{
+  background:var(--accent);
+  border-color:var(--accent);
+  color:var(--onacc);
+}
+
+/* =========================================================
+   SUMMARY CARDS
+   ========================================================= */
+
+.cards{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:12px;
+}
+
+.card{
   background:var(--panel);
   border:1px solid var(--line);
-  border-radius:6px;
+  border-radius:7px;
+  padding:17px;
   box-shadow:var(--shadow);
 }
 
+.card-label{
+  color:var(--mute);
+  font-size:13px;
+  font-weight:600;
+}
+
+.card-value{
+  margin-top:4px;
+  font:800 27px Archivo,sans-serif;
+}
+
+.card-sub{
+  margin-top:4px;
+  color:var(--mute);
+  font-size:13px;
+}
+
+/* =========================================================
+   WORKSPACE GRID
+   ========================================================= */
+
+.workspace{
+  display:grid;
+  grid-template-columns:minmax(0,2fr) minmax(280px,1fr);
+  gap:16px;
+  margin-top:18px;
+}
+
+.panel{
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:7px;
+  box-shadow:var(--shadow);
+}
+
+.panel-head{
+  padding:16px 18px;
+  border-bottom:1px solid var(--line);
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+}
+
+.panel-head h2{
+  font-size:20px;
+}
+
+.panel-head a{
+  color:var(--accent);
+  text-decoration:none;
+  font-weight:600;
+  font-size:14px;
+}
+
+.panel-body{
+  padding:18px;
+}
+
+/* =========================================================
+   MODULE GRID
+   ========================================================= */
+
+.module-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:10px;
+}
+
+.module{
+  border:1px solid var(--line);
+  border-radius:6px;
+  padding:14px;
+  text-decoration:none;
+  color:var(--ink);
+  transition:.15s;
+}
+
+.module:hover{
+  border-color:var(--accent);
+  background:var(--hi);
+}
+
+.module-icon{
+  width:34px;
+  height:34px;
+  border-radius:6px;
+  background:var(--hi);
+  color:var(--accent);
+  display:grid;
+  place-items:center;
+  font-weight:800;
+  margin-bottom:10px;
+}
+
+.module-title{
+  font-weight:700;
+}
+
+.module-description{
+  color:var(--mute);
+  font-size:13px;
+  margin-top:3px;
+}
+
+/* =========================================================
+   REFERENCE TABLE
+   ========================================================= */
+
+.table-wrap{
+  overflow:auto;
+}
+
 table{
-  border-collapse:collapse;
   width:100%;
-  min-width:720px;
+  border-collapse:collapse;
+  min-width:650px;
 }
 
 th,
 td{
-  text-align:left;
   padding:10px 12px;
+  text-align:left;
   border-bottom:1px solid var(--line);
   vertical-align:top;
 }
@@ -277,223 +454,203 @@ tr:last-child td{
 }
 
 th{
-  font:600 15px Archivo,sans-serif;
+  font:600 13px Archivo,sans-serif;
+  color:var(--mute);
 }
 
-td.r,
-th.r{
+td.rate{
   text-align:right;
-  font-variant-numeric:tabular-nums;
-}
-
-td.r{
-  font-weight:600;
-}
-
-.sm{
-  font-size:14px;
-  color:var(--mute);
-}
-
-.empty{
-  padding:26px;
-  text-align:center;
-  color:var(--mute);
-}
-
-.add-btn{
-  padding:6px 10px;
-  font-size:14px;
-}
-
-/* =========================================================
-   QUICK BUDGET
-   ========================================================= */
-
-h2{
-  font-size:clamp(24px,3.4vw,32px);
-  margin:44px 0 6px;
-}
-
-.lead{
-  color:var(--mute);
-  margin:0 0 16px;
-  max-width:60ch;
-}
-
-.qty{
-  width:110px;
-  text-align:right;
-}
-
-.tot td{
-  font-weight:800;
-  background:var(--hi);
-}
-
-/* =========================================================
-   GC BOQ REFERENCE RATES
-   ========================================================= */
-
-.reference-head{
-  display:flex;
-  justify-content:space-between;
-  align-items:flex-end;
-  gap:20px;
-  flex-wrap:wrap;
-  margin-top:48px;
-  margin-bottom:16px;
-}
-
-.reference-title{
-  margin:0;
-}
-
-.reference-actions{
-  display:flex;
-  gap:8px;
-  flex-wrap:wrap;
-}
-
-.reference-actions a{
-  display:inline-flex;
-  align-items:center;
-  gap:6px;
-  text-decoration:none;
-  color:var(--onacc);
-  background:var(--accent);
-  border:1px solid var(--accent);
-  border-radius:4px;
-  padding:9px 12px;
-  font-weight:600;
-  font-size:15px;
-}
-
-.reference-actions a:hover{
-  opacity:.9;
-}
-
-.reference-summary{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:10px;
-  margin:0 0 16px;
-}
-
-.ref-card{
-  background:var(--panel);
-  border:1px solid var(--line);
-  border-radius:6px;
-  padding:14px;
-  box-shadow:var(--shadow);
-}
-
-.ref-card-label{
-  color:var(--mute);
-  font-size:13px;
-  text-transform:uppercase;
-  letter-spacing:.04em;
-}
-
-.ref-card-value{
-  margin-top:3px;
-  font:700 22px Archivo,sans-serif;
-}
-
-.reference-tools{
-  display:flex;
-  gap:10px;
-  flex-wrap:wrap;
-  margin:0 0 10px;
-}
-
-.reference-tools input[type=search]{
-  flex:1 1 280px;
-}
-
-.reference-tools select{
-  flex:0 1 220px;
-}
-
-.badge{
-  display:inline-flex;
-  align-items:center;
-  padding:3px 7px;
-  border-radius:4px;
-  background:var(--hi);
-  color:var(--accent);
-  font-size:12px;
   font-weight:700;
   white-space:nowrap;
 }
 
-.source-line{
-  line-height:1.25;
+.badge{
+  display:inline-block;
+  padding:3px 7px;
+  border-radius:4px;
+  background:var(--hi);
+  color:var(--accent);
+  font-size:11px;
+  font-weight:700;
 }
 
-.rate-cell{
-  white-space:nowrap;
-}
-
-.reference-note{
-  margin:10px 0 0;
+.muted{
   color:var(--mute);
-  font-size:14px;
+  font-size:13px;
 }
 
-.ref-empty{
-  padding:30px 20px;
+.empty{
+  padding:28px 15px;
   text-align:center;
   color:var(--mute);
 }
 
-.ref-empty strong{
+/* =========================================================
+   QUICK LINKS
+   ========================================================= */
+
+.quick-list{
+  display:grid;
+  gap:8px;
+}
+
+.quick-link{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  border:1px solid var(--line);
+  border-radius:5px;
+  padding:11px 12px;
+  text-decoration:none;
   color:var(--ink);
-  display:block;
-  margin-bottom:5px;
+}
+
+.quick-link:hover{
+  border-color:var(--accent);
+  background:var(--hi);
+}
+
+.quick-link span:last-child{
+  color:var(--accent);
 }
 
 /* =========================================================
-   ADD BENCHMARK
+   LOGIN MODAL
    ========================================================= */
 
-details{
-  margin:36px 0 48px;
+.modal{
+  display:none;
+  position:fixed;
+  inset:0;
+  z-index:2000;
+  background:rgba(10,20,25,.55);
+  padding:20px;
+  align-items:center;
+  justify-content:center;
+}
+
+.modal.open{
+  display:flex;
+}
+
+.modal-box{
+  width:min(420px,100%);
   background:var(--panel);
   border:1px solid var(--line);
-  border-radius:6px;
-  padding:14px 18px;
+  border-radius:9px;
+  box-shadow:0 20px 60px rgba(0,0,0,.2);
+  padding:24px;
 }
 
-summary{
-  cursor:pointer;
-  font:800 18px Archivo,sans-serif;
+.modal-head{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  align-items:flex-start;
+  margin-bottom:18px;
 }
 
-form{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(170px,1fr));
-  gap:12px;
-  margin-top:16px;
-  align-items:end;
+.modal-head h2{
+  font-size:25px;
 }
 
-form label{
-  display:block;
-  font-size:14px;
-  font-weight:600;
-  margin-bottom:4px;
-}
-
-form input,
-form select{
-  width:100%;
-}
-
-#fmsg{
-  margin:10px 0 0;
+.close{
+  border:0;
+  background:transparent;
   color:var(--mute);
-  font-size:15px;
+  font-size:22px;
+  padding:0 4px;
+}
+
+.form-group{
+  margin-bottom:13px;
+}
+
+.form-group label{
+  display:block;
+  font-size:13px;
+  font-weight:700;
+  margin-bottom:5px;
+}
+
+.form-group input{
+  width:100%;
+  padding:10px 11px;
+  border:1px solid var(--line);
+  background:var(--panel);
+  color:var(--ink);
+  border-radius:5px;
+}
+
+.login-submit{
+  width:100%;
+  padding:11px;
+  border:1px solid var(--accent);
+  background:var(--accent);
+  color:var(--onacc);
+  border-radius:5px;
+  font-weight:700;
+  margin-top:5px;
+}
+
+.login-links{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  margin-top:13px;
+  font-size:13px;
+}
+
+.login-links a{
+  color:var(--accent);
+  text-decoration:none;
+}
+
+.login-message{
+  min-height:20px;
+  margin-top:12px;
+  color:var(--mute);
+  font-size:13px;
+}
+
+/* =========================================================
+   PROFILE MODAL
+   ========================================================= */
+
+.profile-form{
+  display:none;
+}
+
+.profile-form.open{
+  display:block;
+}
+
+.profile-view{
+  display:block;
+}
+
+.profile-view.hidden{
+  display:none;
+}
+
+.profile-field{
+  padding:10px 0;
+  border-bottom:1px solid var(--line);
+}
+
+.profile-field:last-child{
+  border-bottom:0;
+}
+
+.profile-label{
+  color:var(--mute);
+  font-size:12px;
+}
+
+.profile-value{
+  font-weight:600;
+  margin-top:2px;
 }
 
 /* =========================================================
@@ -501,11 +658,10 @@ form select{
    ========================================================= */
 
 footer{
-  padding:28px 0;
-  margin-top:20px;
   border-top:1px solid var(--line);
+  padding:26px 0;
   color:var(--mute);
-  font-size:15px;
+  font-size:14px;
 }
 
 .footer-inner{
@@ -519,79 +675,72 @@ footer{
    MOBILE
    ========================================================= */
 
-@media(max-width:850px){
+@media(max-width:950px){
 
   .nav{
-    align-items:flex-start;
-    flex-direction:column;
-    padding-top:12px;
-    padding-bottom:12px;
-    gap:10px;
-  }
-
-  .brand{
-    width:100%;
-    justify-content:space-between;
+    flex-wrap:wrap;
+    padding:10px 0;
   }
 
   .main-nav{
-    width:100%;
+    order:3;
+    flex-basis:100%;
     overflow-x:auto;
-    flex-wrap:nowrap;
-    padding-bottom:3px;
+    padding-bottom:2px;
   }
 
-  .main-nav a{
-    white-space:nowrap;
-  }
-
-  .reference-summary{
+  .cards{
     grid-template-columns:repeat(2,1fr);
   }
+
+  .workspace{
+    grid-template-columns:1fr;
+  }
+
 }
 
 @media(max-width:600px){
 
-  body{
-    font-size:16px;
-  }
-
   .wrap{
-    padding:0 14px;
+    width:min(100% - 24px,1180px);
   }
 
-  .intro{
-    padding-top:32px;
+  .brand-sub{
+    display:none;
   }
 
-  .intro h1{
-    font-size:34px;
-  }
-
-  .tools{
+  .dashboard-head{
+    align-items:flex-start;
     flex-direction:column;
+    padding-top:30px;
   }
 
-  input[type=search],
-  .tools select{
+  .head-actions{
     width:100%;
   }
 
-  .reference-summary{
+  .head-actions .btn{
+    flex:1;
+  }
+
+  .cards{
     grid-template-columns:1fr 1fr;
   }
 
-  .reference-head{
-    align-items:flex-start;
+  .card{
+    padding:13px;
   }
 
-  .reference-actions{
-    width:100%;
+  .card-value{
+    font-size:22px;
   }
 
-  .reference-actions a{
-    flex:1;
-    justify-content:center;
+  .module-grid{
+    grid-template-columns:1fr;
+  }
+
+  .user-name{
+    display:none;
   }
 }
 </style>
@@ -600,340 +749,590 @@ footer{
 <body>
 
 <!-- =========================================================
-     MYCOSTING HEADER
+     HEADER
      ========================================================= -->
 
 <header>
+
   <div class="wrap nav">
 
     <div class="brand">
-      <div>
-        <div class="brand-main">MyCosting</div>
-        <div class="brand-sub">Construction Cost Management</div>
-      </div>
-
-      <span id="st" class="status" role="status"></span>
+      <div class="brand-main">MyCosting</div>
+      <div class="brand-sub">Construction Cost Management</div>
     </div>
 
     <nav class="main-nav" aria-label="Main navigation">
 
       <a href="index.html" class="active">
-        <span class="nav-icon">⌂</span>
         Dashboard
       </a>
 
       <a href="rate-analysis.html">
-        <span class="nav-icon">▤</span>
         Rate Analysis
       </a>
 
       <a href="rate-library.html">
-        <span class="nav-icon">▦</span>
         Rate Library
       </a>
 
-      <a href="#" onclick="return false;">
-        <span class="nav-icon">▥</span>
+      <a href="boq.html">
         BOQ
       </a>
 
-      <a href="#" onclick="return false;">
-        <span class="nav-icon">▣</span>
+      <a href="projects.html">
         Projects
       </a>
 
-      <a href="#" onclick="return false;">
-        <span class="nav-icon">▥</span>
+      <a href="reports.html">
         Reports
       </a>
 
     </nav>
 
+    <!-- USER / SIGN IN -->
+
+    <div class="user-area">
+
+      <button
+        class="signin-btn"
+        id="userButton"
+        type="button"
+      >
+
+        <span
+          class="avatar"
+          id="avatar"
+        >G</span>
+
+        <span
+          class="user-name"
+          id="userName"
+        >Sign in</span>
+
+      </button>
+
+      <div
+        class="profile-menu"
+        id="profileMenu"
+      >
+
+        <div class="profile-top">
+
+          <strong id="menuName">
+            Guest User
+          </strong>
+
+          <div
+            class="profile-email"
+            id="menuEmail"
+          >
+            Sign in to MyCosting
+          </div>
+
+          <span
+            class="profile-role"
+            id="menuRole"
+          >
+            Guest
+          </span>
+
+        </div>
+
+        <button
+          type="button"
+          id="profileButton"
+        >
+          My Profile
+        </button>
+
+        <button
+          type="button"
+          id="signOutButton"
+          hidden
+        >
+          Sign out
+        </button>
+
+      </div>
+
+    </div>
+
   </div>
+
 </header>
 
+
 <!-- =========================================================
-     MAIN CONTENT
+     MAIN DASHBOARD
      ========================================================= -->
 
-<main class="wrap">
+<main>
 
-  <div class="intro">
+  <div class="wrap">
 
-    <h1>Cost benchmark repository</h1>
-
-    <p>
-      One place for Civil, MEP and Interior benchmarks.
-      Use it for conceptual budgets, feasibility studies and
-      preliminary estimates, not detailed BOQ pricing.
-    </p>
-
-    <div class="note">
-      The figures below are illustrative samples. Replace them
-      with benchmarks built from your historical project data,
-      vendor quotations, completed project records and market information.
-    </div>
-
-  </div>
-
-  <!-- =======================================================
-       SEARCH / FILTER
-       ======================================================= -->
-
-  <div class="tools">
-
-    <input
-      type="search"
-      id="q"
-      placeholder="Search system or discipline"
-      aria-label="Search benchmarks"
-    >
-
-    <select id="d" aria-label="Filter by discipline">
-      <option value="">All disciplines</option>
-    </select>
-
-  </div>
-
-  <p class="count" id="count" role="status"></p>
-
-  <!-- =======================================================
-       BENCHMARK TABLE
-       ======================================================= -->
-
-  <div class="tbl">
-
-    <table>
-
-      <thead>
-        <tr>
-          <th>System</th>
-          <th>Discipline</th>
-          <th>Unit</th>
-          <th class="r">Low (₹)</th>
-          <th class="r">High (₹)</th>
-          <th>Basis</th>
-          <th><span class="sm">Budget</span></th>
-        </tr>
-      </thead>
-
-      <tbody id="rows"></tbody>
-
-    </table>
-
-  </div>
-
-  <!-- =======================================================
-       GC BOQ REFERENCE RATES
-       ======================================================= -->
-
-  <div class="reference-head">
-
-    <div>
-
-      <h2 class="reference-title">
-        GC BOQ Reference Rates
-      </h2>
-
-      <p class="lead">
-        Rates imported from your GC BOQ Excel files through the
-        MyCosting Rate Library. These are reference rates and do
-        not replace your baseline benchmarks.
-      </p>
-
-    </div>
-
-    <div class="reference-actions">
-
-      <a href="rate-library.html">
-        <span>▦</span>
-        Open Rate Library
-      </a>
-
-    </div>
-
-  </div>
-
-  <div class="reference-summary">
-
-    <div class="ref-card">
-      <div class="ref-card-label">Total Items</div>
-      <div class="ref-card-value" id="refItems">0</div>
-    </div>
-
-    <div class="ref-card">
-      <div class="ref-card-label">Items With Rates</div>
-      <div class="ref-card-value" id="refRated">0</div>
-    </div>
-
-    <div class="ref-card">
-      <div class="ref-card-label">BOQ Value</div>
-      <div class="ref-card-value" id="refValue">₹0</div>
-    </div>
-
-    <div class="ref-card">
-      <div class="ref-card-label">Sources</div>
-      <div class="ref-card-value" id="refSources">0</div>
-    </div>
-
-  </div>
-
-  <div class="reference-tools">
-
-    <input
-      type="search"
-      id="refQ"
-      placeholder="Search GC BOQ item, project or source"
-      aria-label="Search GC BOQ reference rates"
-    >
-
-    <select id="refD" aria-label="Filter GC BOQ rates by discipline">
-      <option value="">All disciplines</option>
-    </select>
-
-  </div>
-
-  <p class="count" id="refCount" role="status"></p>
-
-  <div class="tbl">
-
-    <table>
-
-      <thead>
-        <tr>
-          <th>Discipline</th>
-          <th>Item</th>
-          <th>Unit</th>
-          <th class="r">BOQ Rate (₹)</th>
-          <th>Source Project</th>
-          <th>Excel Source</th>
-        </tr>
-      </thead>
-
-      <tbody id="refRows"></tbody>
-
-    </table>
-
-  </div>
-
-  <p class="reference-note">
-    Source traceability is retained from the imported workbook,
-    including Excel file, sheet and source row. Rate Library data
-    is currently stored in this browser using local storage.
-  </p>
-
-  <!-- =======================================================
-       QUICK BUDGET
-       ======================================================= -->
-
-  <h2>Quick budget</h2>
-
-  <p class="lead">
-    Add benchmarks, enter the quantity for each unit,
-    and read a low–high range.
-  </p>
-
-  <div class="tbl">
-
-    <table>
-
-      <thead>
-        <tr>
-          <th>System</th>
-          <th>Quantity</th>
-          <th class="r">Low (₹)</th>
-          <th class="r">High (₹)</th>
-          <th></th>
-        </tr>
-      </thead>
-
-      <tbody id="bud"></tbody>
-
-    </table>
-
-  </div>
-
-  <!-- =======================================================
-       CONTRIBUTOR ACCESS
-       ======================================================= -->
-
-  <p id="gate" class="note">
-    Viewing the repository and building a quick budget are open
-    to everyone. To add benchmarks, sign in with an account that
-    has contributor access.
-  </p>
-
-  <details id="add" hidden>
-
-    <summary>Add a benchmark</summary>
-
-    <form id="f">
+    <section class="dashboard-head">
 
       <div>
-        <label for="fs">System</label>
-        <input
-          id="fs"
-          required
-          placeholder="e.g. Rooftop solar PV"
+
+        <div class="dashboard-kicker">
+          Cost Management Workspace
+        </div>
+
+        <h1 id="welcomeTitle">
+          Good evening
+        </h1>
+
+        <p>
+          Manage construction benchmarks, GC BOQ reference rates,
+          rate analysis and project cost information from one place.
+        </p>
+
+      </div>
+
+      <div class="head-actions">
+
+        <a
+          class="btn"
+          href="rate-library.html"
         >
-      </div>
+          + Import GC BOQ
+        </a>
 
-      <div>
-        <label for="fd">Discipline</label>
-        <select id="fd"></select>
-      </div>
-
-      <div>
-        <label for="fu">Unit</label>
-        <input
-          id="fu"
-          required
-          placeholder="₹/kWp, ₹/sq ft"
+        <a
+          class="btn primary"
+          href="rate-analysis.html"
         >
+          + Rate Analysis
+        </a>
+
       </div>
 
-      <div>
-        <label for="fl">Low (₹)</label>
-        <input
-          id="fl"
-          type="number"
-          min="0"
-          step="any"
-          required
+    </section>
+
+
+    <!-- =====================================================
+         SUMMARY CARDS
+         ===================================================== -->
+
+    <section class="cards">
+
+      <div class="card">
+
+        <div class="card-label">
+          GC BOQ Items
+        </div>
+
+        <div
+          class="card-value"
+          id="cardItems"
         >
+          0
+        </div>
+
+        <div class="card-sub">
+          Imported reference rates
+        </div>
+
       </div>
 
-      <div>
-        <label for="fh">High (₹)</label>
-        <input
-          id="fh"
-          type="number"
-          min="0"
-          step="any"
-          required
+
+      <div class="card">
+
+        <div class="card-label">
+          Rated Items
+        </div>
+
+        <div
+          class="card-value"
+          id="cardRated"
         >
+          0
+        </div>
+
+        <div class="card-sub">
+          Items with BOQ rates
+        </div>
+
       </div>
 
+
+      <div class="card">
+
+        <div class="card-label">
+          BOQ Reference Value
+        </div>
+
+        <div
+          class="card-value"
+          id="cardValue"
+        >
+          ₹0
+        </div>
+
+        <div class="card-sub">
+          Imported source value
+        </div>
+
+      </div>
+
+
+      <div class="card">
+
+        <div class="card-label">
+          Active Sources
+        </div>
+
+        <div
+          class="card-value"
+          id="cardSources"
+        >
+          0
+        </div>
+
+        <div class="card-sub">
+          Projects / Excel sources
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         WORKSPACE
+         ===================================================== -->
+
+    <section class="workspace">
+
+      <!-- LEFT -->
       <div>
-        <label for="fb">Basis</label>
-        <select id="fb"></select>
+
+        <!-- MODULES -->
+
+        <div class="panel">
+
+          <div class="panel-head">
+
+            <h2>
+              Cost Management
+            </h2>
+
+          </div>
+
+          <div class="panel-body">
+
+            <div class="module-grid">
+
+              <a
+                class="module"
+                href="rate-analysis.html"
+              >
+
+                <div class="module-icon">
+                  RA
+                </div>
+
+                <div class="module-title">
+                  Rate Analysis
+                </div>
+
+                <div class="module-description">
+                  Build detailed material, labour and equipment rates.
+                </div>
+
+              </a>
+
+
+              <a
+                class="module"
+                href="rate-library.html"
+              >
+
+                <div class="module-icon">
+                  RL
+                </div>
+
+                <div class="module-title">
+                  Rate Library
+                </div>
+
+                <div class="module-description">
+                  Import and classify GC BOQ rates discipline-wise.
+                </div>
+
+              </a>
+
+
+              <a
+                class="module"
+                href="boq.html"
+              >
+
+                <div class="module-icon">
+                  BQ
+                </div>
+
+                <div class="module-title">
+                  BOQ
+                </div>
+
+                <div class="module-description">
+                  Manage quantities, items, rates and BOQ values.
+                </div>
+
+              </a>
+
+
+              <a
+                class="module"
+                href="projects.html"
+              >
+
+                <div class="module-icon">
+                  PR
+                </div>
+
+                <div class="module-title">
+                  Projects
+                </div>
+
+                <div class="module-description">
+                  Organise cost data by project and package.
+                </div>
+
+              </a>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- GC BOQ REFERENCES -->
+
+        <div class="panel" style="margin-top:16px;">
+
+          <div class="panel-head">
+
+            <h2>
+              GC BOQ Reference Rates
+            </h2>
+
+            <a href="rate-library.html">
+              View Rate Library →
+            </a>
+
+          </div>
+
+          <div class="table-wrap">
+
+            <table>
+
+              <thead>
+
+                <tr>
+                  <th>Discipline</th>
+                  <th>Item</th>
+                  <th>Unit</th>
+                  <th style="text-align:right;">
+                    Rate
+                  </th>
+                  <th>Source</th>
+                </tr>
+
+              </thead>
+
+              <tbody id="referenceRows">
+
+              </tbody>
+
+            </table>
+
+          </div>
+
+        </div>
+
       </div>
 
-      <div>
-        <button class="primary" type="submit">
-          Add benchmark
-        </button>
-      </div>
 
-    </form>
+      <!-- RIGHT -->
 
-    <p id="fmsg">
-      Benchmarks you add are shared with everyone who opens this page.
-    </p>
+      <aside>
 
-  </details>
+        <!-- QUICK ACTIONS -->
+
+        <div class="panel">
+
+          <div class="panel-head">
+
+            <h2>
+              Quick Actions
+            </h2>
+
+          </div>
+
+          <div class="panel-body">
+
+            <div class="quick-list">
+
+              <a
+                class="quick-link"
+                href="rate-library.html"
+              >
+                <span>
+                  Import GC BOQ
+                </span>
+                <span>→</span>
+              </a>
+
+              <a
+                class="quick-link"
+                href="rate-analysis.html"
+              >
+                <span>
+                  Create Rate Analysis
+                </span>
+                <span>→</span>
+              </a>
+
+              <a
+                class="quick-link"
+                href="boq.html"
+              >
+                <span>
+                  Create BOQ
+                </span>
+                <span>→</span>
+              </a>
+
+              <a
+                class="quick-link"
+                href="projects.html"
+              >
+                <span>
+                  Open Projects
+                </span>
+                <span>→</span>
+              </a>
+
+              <a
+                class="quick-link"
+                href="reports.html"
+              >
+                <span>
+                  Generate Report
+                </span>
+                <span>→</span>
+              </a>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- ACCOUNT -->
+
+        <div
+          class="panel"
+          style="margin-top:16px;"
+        >
+
+          <div class="panel-head">
+
+            <h2>
+              My Account
+            </h2>
+
+          </div>
+
+          <div class="panel-body">
+
+            <div
+              id="accountGuest"
+            >
+
+              <div class="muted">
+                Sign in to save your work,
+                access your profile and eventually
+                sync projects across devices.
+              </div>
+
+              <button
+                class="btn primary"
+                style="width:100%;margin-top:14px;"
+                id="accountSignIn"
+              >
+                Sign in
+              </button>
+
+            </div>
+
+
+            <div
+              id="accountUser"
+              hidden
+            >
+
+              <div class="profile-field">
+
+                <div class="profile-label">
+                  Name
+                </div>
+
+                <div
+                  class="profile-value"
+                  id="accountName"
+                >
+                </div>
+
+              </div>
+
+              <div class="profile-field">
+
+                <div class="profile-label">
+                  Email
+                </div>
+
+                <div
+                  class="profile-value"
+                  id="accountEmail"
+                >
+                </div>
+
+              </div>
+
+              <div class="profile-field">
+
+                <div class="profile-label">
+                  Access
+                </div>
+
+                <div
+                  class="profile-value"
+                  id="accountRole"
+                >
+                  User
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </aside>
+
+    </section>
+
+  </div>
 
 </main>
+
 
 <!-- =========================================================
      FOOTER
@@ -946,579 +1345,300 @@ footer{
     <div>
       <strong>MyCosting</strong>
       <br>
-      <span>Construction Cost Management</span>
+      Construction Cost Management
     </div>
 
     <div>
-      Site Ledger · Cost Benchmark Repository
+      Benchmark Repository · Rate Library · Rate Analysis
     </div>
 
   </div>
 
 </footer>
 
+
 <!-- =========================================================
-     JAVASCRIPT
+     LOGIN MODAL
      ========================================================= -->
+
+<div
+  class="modal"
+  id="loginModal"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="loginTitle"
+>
+
+  <div class="modal-box">
+
+    <div class="modal-head">
+
+      <div>
+
+        <h2 id="loginTitle">
+          Sign in
+        </h2>
+
+        <div class="muted">
+          Access your MyCosting workspace.
+        </div>
+
+      </div>
+
+      <button
+        class="close"
+        id="closeLogin"
+        type="button"
+        aria-label="Close"
+      >
+        ×
+      </button>
+
+    </div>
+
+
+    <form id="loginForm">
+
+      <div class="form-group">
+
+        <label for="loginEmail">
+          Email address
+        </label>
+
+        <input
+          id="loginEmail"
+          type="email"
+          autocomplete="email"
+          required
+          placeholder="name@example.com"
+        >
+
+      </div>
+
+
+      <div class="form-group">
+
+        <label for="loginPassword">
+          Password
+        </label>
+
+        <input
+          id="loginPassword"
+          type="password"
+          autocomplete="current-password"
+          required
+          placeholder="Password"
+        >
+
+      </div>
+
+
+      <button
+        class="login-submit"
+        type="submit"
+      >
+        Sign in
+      </button>
+
+    </form>
+
+
+    <div class="login-links">
+
+      <a href="#" id="forgotPassword">
+        Forgot password?
+      </a>
+
+      <a href="#" id="createAccount">
+        Create account
+      </a>
+
+    </div>
+
+
+    <div
+      class="login-message"
+      id="loginMessage"
+    ></div>
+
+  </div>
+
+</div>
+
+
+<!-- =========================================================
+     PROFILE MODAL
+     ========================================================= -->
+
+<div
+  class="modal"
+  id="profileModal"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="profileTitle"
+>
+
+  <div class="modal-box">
+
+    <div class="modal-head">
+
+      <div>
+
+        <h2 id="profileTitle">
+          My Profile
+        </h2>
+
+        <div class="muted">
+          Your MyCosting account information.
+        </div>
+
+      </div>
+
+      <button
+        class="close"
+        id="closeProfile"
+        type="button"
+      >
+        ×
+      </button>
+
+    </div>
+
+
+    <div class="profile-view" id="profileView">
+
+      <div class="profile-field">
+
+        <div class="profile-label">
+          Name
+        </div>
+
+        <div
+          class="profile-value"
+          id="profileName"
+        >
+          Guest User
+        </div>
+
+      </div>
+
+
+      <div class="profile-field">
+
+        <div class="profile-label">
+          Email
+        </div>
+
+        <div
+          class="profile-value"
+          id="profileEmail"
+        >
+          Not signed in
+        </div>
+
+      </div>
+
+
+      <div class="profile-field">
+
+        <div class="profile-label">
+          Role
+        </div>
+
+        <div
+          class="profile-value"
+          id="profileRole"
+        >
+          Guest
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
 
 <script>
 
-(function(){
-
 /* =========================================================
-   CONSTANTS
+   CONFIGURATION
    ========================================================= */
 
-var RATE_LIBRARY_KEY="myCosting.rateLibrary.v2";
+const RATE_LIBRARY_KEY =
+  "myCosting.rateLibrary.v2";
 
-var D=[
-  "Civil",
-  "Interior",
-  "Electrical",
-  "HVAC",
-  "Public Health & Fire Fighting"
-];
-
-var B=[
-  "Historical project data",
-  "Vendor quotation",
-  "Completed project record",
-  "Market information"
-];
-
-var RATE_DISCIPLINES=[
-  "C&I",
-  "Electrical",
-  "HVAC",
-  "Fire",
-  "PHE",
-  "ELV",
-  "Lift",
-  "External Development",
-  "Landscape",
-  "Specialist",
-  "Other"
-];
-
-/* =========================================================
-   BASELINE BENCHMARKS
-   ========================================================= */
-
-var S=[
-
-  [
-    "RCC framed structure, commercial",
-    "Civil",
-    "₹/sq ft built-up",
-    1800,
-    2400,
-    0
-  ],
-
-  [
-    "RCC framed structure, residential high-rise",
-    "Civil",
-    "₹/sq ft built-up",
-    1700,
-    2300,
-    0
-  ],
-
-  [
-    "Basement excavation and structure",
-    "Civil",
-    "₹/sq ft basement",
-    2800,
-    3800,
-    2
-  ],
-
-  [
-    "Facade, curtain wall and cladding",
-    "Civil",
-    "₹/sq ft facade",
-    1800,
-    4500,
-    1
-  ],
-
-  [
-    "External development and landscape",
-    "Civil",
-    "₹/sq ft site",
-    300,
-    600,
-    0
-  ],
-
-  [
-    "Office fit-out, standard",
-    "Interior",
-    "₹/sq ft carpet",
-    1400,
-    2000,
-    2
-  ],
-
-  [
-    "Office fit-out, premium",
-    "Interior",
-    "₹/sq ft carpet",
-    2200,
-    3500,
-    2
-  ],
-
-  [
-    "Retail fit-out",
-    "Interior",
-    "₹/sq ft carpet",
-    1800,
-    3000,
-    0
-  ],
-
-  [
-    "Hotel guest room, FF&E and fit-out",
-    "Interior",
-    "₹/key",
-    1200000,
-    2500000,
-    1
-  ],
-
-  [
-    "HT panels (11/22 kV)",
-    "Electrical",
-    "₹/panel",
-    600000,
-    1200000,
-    1
-  ],
-
-  [
-    "LT panels (PCC/MCC)",
-    "Electrical",
-    "₹/panel",
-    350000,
-    800000,
-    1
-  ],
-
-  [
-    "Transformers",
-    "Electrical",
-    "₹/kVA",
-    2500,
-    3500,
-    1
-  ],
-
-  [
-    "DG sets, silent, installed",
-    "Electrical",
-    "₹/kVA",
-    5000,
-    7500,
-    1
-  ],
-
-  [
-    "Indoor electrical works",
-    "Electrical",
-    "₹/sq ft built-up",
-    180,
-    320,
-    0
-  ],
-
-  [
-    "Outdoor electrical works",
-    "Electrical",
-    "₹/sq ft site",
-    40,
-    90,
-    2
-  ],
-
-  [
-    "VRV/VRF systems",
-    "HVAC",
-    "₹/TR",
-    70000,
-    110000,
-    1
-  ],
-
-  [
-    "Chillers and plant",
-    "HVAC",
-    "₹/TR",
-    55000,
-    85000,
-    1
-  ],
-
-  [
-    "AHUs",
-    "HVAC",
-    "₹/CFM",
-    40,
-    65,
-    1
-  ],
-
-  [
-    "FCUs",
-    "HVAC",
-    "₹/TR",
-    20000,
-    32000,
-    1
-  ],
-
-  [
-    "Ventilation systems",
-    "HVAC",
-    "₹/sq ft built-up",
-    45,
-    90,
-    2
-  ],
-
-  [
-    "Sewage treatment plant (STP)",
-    "Public Health & Fire Fighting",
-    "₹/KLD",
-    45000,
-    80000,
-    2
-  ],
-
-  [
-    "Water treatment plant (WTP)",
-    "Public Health & Fire Fighting",
-    "₹/KLD",
-    20000,
-    40000,
-    1
-  ],
-
-  [
-    "Water supply system",
-    "Public Health & Fire Fighting",
-    "₹/sq ft built-up",
-    60,
-    110,
-    0
-  ],
-
-  [
-    "Drainage system",
-    "Public Health & Fire Fighting",
-    "₹/sq ft built-up",
-    55,
-    100,
-    0
-  ],
-
-  [
-    "Fire fighting system",
-    "Public Health & Fire Fighting",
-    "₹/sq ft built-up",
-    110,
-    190,
-    3
-  ]
-
-];
-
-S.forEach(function(r,i){
-  r[6]="b"+i;
-});
-
-/* =========================================================
-   APPLICATION STATE
-   ========================================================= */
-
-var U=[],
-    db=null,
-    canW=false,
-    uid=null,
-    bud=[],
-    importedRates=[];
 
 /* =========================================================
    HELPERS
    ========================================================= */
 
-var $=function(i){
-  return document.getElementById(i);
-};
+const $ = id =>
+  document.getElementById(id);
 
-var fmt=new Intl.NumberFormat("en-IN");
+const fmt =
+  new Intl.NumberFormat("en-IN");
 
-function esc(s){
 
-  return String(s==null?"":s).replace(
-    /[&<>"]/g,
-    function(c){
-      return {
-        "&":"&amp;",
-        "<":"&lt;",
-        ">":"&gt;",
-        '"':"&quot;"
-      }[c];
-    }
-  );
+function money(value){
 
-}
+  const n =
+    Number(value);
 
-function safeNumber(v){
-
-  var n=Number(v);
-
-  return isFinite(n)?n:0;
-
-}
-
-function money(v){
-
-  return "₹"+fmt.format(
-    Math.round(safeNumber(v))
-  );
-
-}
-
-function fill(sel,a){
-
-  a.forEach(function(x){
-
-    var o=document.createElement("option");
-
-    o.value=x;
-    o.textContent=x;
-
-    sel.appendChild(o);
-
-  });
-
-}
-
-fill($("d"),D);
-fill($("fd"),D);
-fill($("fb"),B);
-fill($("refD"),RATE_DISCIPLINES);
-
-/* =========================================================
-   ORIGINAL BENCHMARK REPOSITORY
-   ========================================================= */
-
-function all(){
-
-  return S.concat(U);
-
-}
-
-function find(k){
-
-  return all().filter(function(r){
-    return r[6]===k;
-  })[0];
-
-}
-
-function draw(){
-
-  var q=$("q").value.trim().toLowerCase();
-  var d=$("d").value;
-  var a=all();
-
-  var list=a.filter(function(r){
-
-    return (
-      (!d || r[1]===d) &&
-      (
-        !q ||
-        (r[0]+" "+r[1])
-          .toLowerCase()
-          .indexOf(q)>-1
-      )
+  return "₹" +
+    fmt.format(
+      Number.isFinite(n)
+        ? Math.round(n)
+        : 0
     );
 
-  });
+}
 
-  $("rows").innerHTML=list.length?
 
-    list.map(function(r){
+function esc(value){
 
-      return "<tr>"+
-
-        "<td>"+esc(r[0])+"</td>"+
-
-        "<td>"+esc(r[1])+"</td>"+
-
-        "<td>"+esc(r[2])+"</td>"+
-
-        '<td class="r">'+fmt.format(r[3])+"</td>"+
-
-        '<td class="r">'+fmt.format(r[4])+"</td>"+
-
-        '<td class="sm">'+
-        esc(B[r[5]]||r[5])+
-        "</td>"+
-
-        "<td>"+
-
-        '<button class="add-btn" '+
-        'data-a="'+esc(r[6])+'" '+
-        'aria-label="Add '+esc(r[0])+
-        ' to budget">Add</button>'+
-
-        "</td>"+
-
-        "</tr>";
-
-    }).join("")
-
-    :
-
-    '<tr><td colspan="7" class="empty">'+
-    'No benchmarks match. Clear the search or choose another discipline.'+
-    "</td></tr>";
-
-  $("count").textContent=
-    list.length+" of "+a.length+" benchmarks";
+  return String(
+    value == null ? "" : value
+  ).replace(
+    /[&<>"]/g,
+    c => ({
+      "&":"&amp;",
+      "<":"&lt;",
+      ">":"&gt;",
+      '"':"&quot;"
+    }[c])
+  );
 
 }
 
-/* =========================================================
-   QUICK BUDGET
-   ========================================================= */
-
-function drawBud(){
-
-  bud=bud.filter(function(b){
-    return find(b.k);
-  });
-
-  if(!bud.length){
-
-    $("bud").innerHTML=
-      '<tr><td colspan="5" class="empty">'+
-      'Nothing added yet. Choose Add on a benchmark above.'+
-      "</td></tr>";
-
-    return;
-
-  }
-
-  var h="";
-
-  bud.forEach(function(b,k){
-
-    var r=find(b.k);
-
-    h+=
-      "<tr>"+
-
-      "<td>"+
-      esc(r[0])+
-      '<div class="sm">'+
-      esc(r[2])+
-      "</div>"+
-      "</td>"+
-
-      "<td>"+
-      '<input class="qty" '+
-      'type="number" min="0" step="any" '+
-      'value="'+b.q+'" '+
-      'data-q="'+k+'" '+
-      'aria-label="Quantity for '+
-      esc(r[0])+'">'+
-      "</td>"+
-
-      '<td class="r" id="l'+k+'"></td>'+
-
-      '<td class="r" id="u'+k+'"></td>'+
-
-      "<td>"+
-      '<button data-x="'+k+'" '+
-      'aria-label="Remove">Remove</button>'+
-      "</td>"+
-
-      "</tr>";
-
-  });
-
-  h+=
-    '<tr class="tot">'+
-    "<td>Total range</td>"+
-    "<td></td>"+
-    '<td class="r" id="tl"></td>'+
-    '<td class="r" id="tu"></td>'+
-    "<td></td>"+
-    "</tr>";
-
-  $("bud").innerHTML=h;
-
-  recalc();
-
-}
-
-function recalc(){
-
-  var lo=0,
-      hi=0;
-
-  bud.forEach(function(b,k){
-
-    var r=find(b.k);
-
-    var l=r[3]*b.q;
-    var u=r[4]*b.q;
-
-    lo+=l;
-    hi+=u;
-
-    $("l"+k).textContent=
-      fmt.format(Math.round(l));
-
-    $("u"+k).textContent=
-      fmt.format(Math.round(u));
-
-  });
-
-  $("tl").textContent=
-    fmt.format(Math.round(lo));
-
-  $("tu").textContent=
-    fmt.format(Math.round(hi));
-
-}
 
 /* =========================================================
    GC BOQ RATE LIBRARY
    ========================================================= */
 
-function loadImportedRates(){
+function loadRates(){
 
   try{
 
-    var raw=
-      localStorage.getItem(RATE_LIBRARY_KEY);
+    const raw =
+      localStorage.getItem(
+        RATE_LIBRARY_KEY
+      );
 
     if(!raw){
       return [];
     }
 
-    var data=JSON.parse(raw);
+    const data =
+      JSON.parse(raw);
 
     return Array.isArray(data)
       ? data
       : [];
 
-  }catch(e){
+  }catch(error){
 
     return [];
 
@@ -1526,630 +1646,688 @@ function loadImportedRates(){
 
 }
 
-function normaliseImportedRate(item,index){
 
-  if(!item || typeof item!=="object"){
-    return null;
-  }
+function getRateValue(item){
 
-  var description=
-    String(
-      item.description ||
-      item.item ||
-      item.name ||
-      ""
-    ).trim();
+  const value =
+    Number(item.rate);
 
-  var discipline=
-    String(
-      item.discipline ||
-      "Other"
-    ).trim();
-
-  var unit=
-    String(
-      item.unit ||
-      ""
-    ).trim();
-
-  var rate=safeNumber(
-    item.rate
-  );
-
-  var qty=safeNumber(
-    item.qty
-  );
-
-  var amount=safeNumber(
-    item.amount
-  );
-
-  if(!description){
-    return null;
-  }
-
-  if(!RATE_DISCIPLINES.includes(discipline)){
-    discipline="Other";
-  }
-
-  if(!amount && qty && rate){
-    amount=qty*rate;
-  }
-
-  return {
-    id:
-      item.id ||
-      "ref-"+index,
-
-    description:description,
-
-    discipline:discipline,
-
-    unit:unit,
-
-    qty:qty,
-
-    rate:rate,
-
-    amount:amount,
-
-    sourceFile:
-      String(item.sourceFile || ""),
-
-    sourceSheet:
-      String(item.sourceSheet || item.sheet || ""),
-
-    sourceRow:
-      item.sourceRow ||
-      item.row ||
-      "",
-
-    projectName:
-      String(
-        item.projectName ||
-        item.sourceProject ||
-        ""
-      ),
-
-    sourceType:
-      String(
-        item.sourceType ||
-        "GC BOQ"
-      ),
-
-    rateDate:
-      String(
-        item.rateDate ||
-        ""
-      ),
-
-    importedAt:
-      item.importedAt ||
-      ""
-
-  };
+  return Number.isFinite(value)
+    ? value
+    : 0;
 
 }
 
-function refreshImportedRates(){
 
-  importedRates=
-    loadImportedRates()
-      .map(normaliseImportedRate)
-      .filter(Boolean);
+function getAmount(item){
 
-  drawReferenceSummary();
-  drawReferenceRates();
+  let amount =
+    Number(item.amount);
+
+  if(
+    !Number.isFinite(amount) ||
+    amount === 0
+  ){
+
+    const qty =
+      Number(item.qty);
+
+    const rate =
+      getRateValue(item);
+
+    if(
+      Number.isFinite(qty) &&
+      qty > 0 &&
+      rate > 0
+    ){
+
+      amount =
+        qty * rate;
+
+    }else{
+
+      amount=0;
+
+    }
+
+  }
+
+  return amount;
 
 }
 
-function drawReferenceSummary(){
 
-  var rated=
-    importedRates.filter(function(r){
-      return r.rate>0;
-    });
+/* =========================================================
+   DASHBOARD REFERENCE DATA
+   ========================================================= */
 
-  var value=
-    importedRates.reduce(function(sum,r){
-      return sum+safeNumber(r.amount);
-    },0);
+function renderReferenceRates(){
 
-  var sources={};
+  const rates =
+    loadRates();
 
-  importedRates.forEach(function(r){
+  const rated =
+    rates.filter(
+      item =>
+        getRateValue(item) > 0
+    );
 
-    var key=
+  const totalValue =
+    rates.reduce(
+      (sum,item) =>
+        sum + getAmount(item),
+      0
+    );
+
+  const sources =
+    new Set();
+
+  rates.forEach(item => {
+
+    const source =
       [
-        r.projectName,
-        r.sourceFile
-      ].join("|");
+        item.projectName || "",
+        item.sourceFile || ""
+      ]
+      .join("|");
 
-    if(key!=="|"){
-      sources[key]=true;
+    if(source !== "|"){
+      sources.add(source);
     }
 
   });
 
-  $("refItems").textContent=
-    fmt.format(importedRates.length);
 
-  $("refRated").textContent=
+  $("cardItems").textContent =
+    fmt.format(rates.length);
+
+  $("cardRated").textContent =
     fmt.format(rated.length);
 
-  $("refValue").textContent=
-    money(value);
+  $("cardValue").textContent =
+    money(totalValue);
 
-  $("refSources").textContent=
-    fmt.format(Object.keys(sources).length);
+  $("cardSources").textContent =
+    fmt.format(sources.size);
 
-}
 
-function drawReferenceRates(){
+  /* -------------------------------------------------------
+     SHOW LATEST / FIRST 8 REFERENCE ITEMS
+     ------------------------------------------------------- */
 
-  var q=
-    $("refQ").value
-      .trim()
-      .toLowerCase();
+  const rows =
+    $("referenceRows");
 
-  var d=$("refD").value;
+  if(!rates.length){
 
-  var list=
-    importedRates.filter(function(r){
-
-      var text=[
-        r.description,
-        r.discipline,
-        r.unit,
-        r.projectName,
-        r.sourceFile,
-        r.sourceSheet
-      ].join(" ").toLowerCase();
-
-      return (
-        (!d || r.discipline===d) &&
-        (!q || text.indexOf(q)>-1)
-      );
-
-    });
-
-  $("refCount").textContent=
-    list.length+
-    " of "+
-    importedRates.length+
-    " imported GC BOQ items";
-
-  if(!list.length){
-
-    $("refRows").innerHTML=
-      '<tr>'+
-      '<td colspan="6" class="ref-empty">'+
-      '<strong>No GC BOQ reference rates available.</strong>'+
-      (
-        importedRates.length
-        ?
-        "No imported items match your search or discipline filter."
-        :
-        'Upload a GC BOQ Excel file in the Rate Library to populate this section.'
-      )+
-      "</td>"+
-      "</tr>";
+    rows.innerHTML =
+      `<tr>
+        <td colspan="5" class="empty">
+          <strong>No GC BOQ reference rates yet.</strong>
+          <br>
+          Upload a GC BOQ Excel file through the
+          <a href="rate-library.html"
+             style="color:var(--accent);">
+             Rate Library
+          </a>
+          to populate this section.
+        </td>
+      </tr>`;
 
     return;
 
   }
 
-  $("refRows").innerHTML=
-    list.map(function(r){
 
-      var sourceDetails=[];
-
-      if(r.sourceSheet){
-        sourceDetails.push(
-          "Sheet: "+esc(r.sourceSheet)
-        );
-      }
-
-      if(r.sourceRow){
-        sourceDetails.push(
-          "Row: "+esc(r.sourceRow)
-        );
-      }
-
-      var project=
-        r.projectName
-        ?
-        esc(r.projectName)
-        :
-        '<span class="sm">Not specified</span>';
-
-      var source=
-        r.sourceFile
-        ?
-        '<div class="source-line">'+
-        '<span class="badge">GC BOQ</span>'+
-        '<div class="sm">'+
-        esc(r.sourceFile)+
-        "</div>"+
-        (
-          sourceDetails.length
-          ?
-          '<div class="sm">'+
-          sourceDetails.join(" · ")+
-          "</div>"
-          :
-          ""
-        )+
-        "</div>"
-        :
-        '<span class="badge">GC BOQ</span>';
-
-      return "<tr>"+
-
-        "<td>"+
-        "<strong>"+esc(r.discipline)+"</strong>"+
-        "</td>"+
-
-        "<td>"+
-        esc(r.description)+
-        (
-          r.rateDate
-          ?
-          '<div class="sm">Rate date: '+
-          esc(r.rateDate)+
-          "</div>"
-          :
-          ""
-        )+
-        "</td>"+
-
-        "<td>"+
-        esc(r.unit || "—")+
-        "</td>"+
-
-        '<td class="r rate-cell">'+
-        (
-          r.rate>0
-          ?
-          money(r.rate)
-          :
-          '<span class="sm">No rate</span>'
-        )+
-        "</td>"+
-
-        "<td>"+
-        project+
-        "</td>"+
-
-        "<td>"+
-        source+
-        "</td>"+
-
-        "</tr>";
-
-    }).join("");
-
-}
-
-/* =========================================================
-   EVENT HANDLERS
-   ========================================================= */
-
-$("q").addEventListener(
-  "input",
-  draw
-);
-
-$("d").addEventListener(
-  "change",
-  draw
-);
-
-$("refQ").addEventListener(
-  "input",
-  drawReferenceRates
-);
-
-$("refD").addEventListener(
-  "change",
-  drawReferenceRates
-);
-
-$("rows").addEventListener(
-  "click",
-  function(e){
-
-    var a=e.target.getAttribute("data-a");
-
-    if(!a)return;
-
-    if(!bud.some(function(b){
-      return b.k===a;
-    })){
-
-      bud.push({
-        k:a,
-        q:1
-      });
-
-    }
-
-    drawBud();
-
-  }
-);
-
-$("bud").addEventListener(
-  "input",
-  function(e){
-
-    var k=e.target.getAttribute("data-q");
-
-    if(k===null)return;
-
-    bud[+k].q=
-      Math.max(
-        0,
-        +e.target.value||0
-      );
-
-    recalc();
-
-  }
-);
-
-$("bud").addEventListener(
-  "click",
-  function(e){
-
-    var k=e.target.getAttribute("data-x");
-
-    if(k===null)return;
-
-    bud.splice(+k,1);
-
-    drawBud();
-
-  }
-);
-
-/* =========================================================
-   ADD BENCHMARK
-   ========================================================= */
-
-$("f").addEventListener(
-  "submit",
-  function(e){
-
-    e.preventDefault();
-
-    var v={
-      s:$("fs").value.trim(),
-      d:$("fd").value,
-      u:$("fu").value.trim(),
-      lo:+$("fl").value,
-      hi:+$("fh").value,
-      b:$("fb").value
-    };
-
-    if(!db || !canW){
-
-      $("fmsg").textContent=
-        "Sign in with contributor access to add benchmarks.";
-
-      return;
-
-    }
-
-    if(!v.s || !v.u){
-
-      $("fmsg").textContent=
-        "Fill in the system and unit.";
-
-      return;
-
-    }
-
-    if(v.lo>v.hi){
-
-      $("fmsg").textContent=
-        "The low value must not be above the high value.";
-
-      return;
-
-    }
-
-    v.by=uid;
-    v.t=Date.now();
-
-    db.collection("benchmarks")
-      .add(v)
-      .then(function(){
-
-        $("f").reset();
-
-        $("fmsg").textContent=
-          'Added "'+
-          v.s+
-          '". It is now visible to everyone.';
-
-      })
-      .catch(function(err){
-
-        $("fmsg").textContent=
-          (
-            err &&
-            err.code==="not_granted"
+  const sorted =
+    [...rates]
+      .sort(
+        (a,b) =>
+          String(
+            b.importedAt || ""
+          ).localeCompare(
+            String(
+              a.importedAt || ""
+            )
           )
-          ?
-          "Your account does not have contributor access."
-          :
-          "Could not save. Try again.";
+      )
+      .slice(0,8);
 
-      });
+
+  rows.innerHTML =
+    sorted.map(item => {
+
+      const discipline =
+        item.discipline ||
+        "Other";
+
+      const description =
+        item.description ||
+        "Unnamed item";
+
+      const unit =
+        item.unit ||
+        "—";
+
+      const rate =
+        getRateValue(item);
+
+      const project =
+        item.projectName ||
+        item.sourceFile ||
+        "GC BOQ";
+
+
+      return `
+        <tr>
+
+          <td>
+            <span class="badge">
+              ${esc(discipline)}
+            </span>
+          </td>
+
+          <td>
+            <strong>
+              ${esc(description)}
+            </strong>
+
+            ${
+              item.sourceSheet
+              ?
+              `<div class="muted">
+                ${esc(item.sourceSheet)}
+                ${
+                  item.sourceRow
+                  ?
+                  ` · Row ${esc(item.sourceRow)}`
+                  :
+                  ""
+                }
+              </div>`
+              :
+              ""
+            }
+
+          </td>
+
+          <td>
+            ${esc(unit)}
+          </td>
+
+          <td class="rate">
+            ${
+              rate > 0
+              ?
+              money(rate)
+              :
+              "—"
+            }
+          </td>
+
+          <td>
+            ${esc(project)}
+            <div class="muted">
+              ${
+                item.sourceFile
+                ?
+                esc(item.sourceFile)
+                :
+                "GC BOQ Reference"
+              }
+            </div>
+          </td>
+
+        </tr>
+      `;
+
+    })
+    .join("");
+
+}
+
+
+/* =========================================================
+   LOGIN / PROFILE UI
+   ========================================================= */
+
+let currentUser = null;
+
+
+function openLogin(){
+
+  $("loginModal")
+    .classList.add("open");
+
+  $("loginEmail")
+    .focus();
+
+}
+
+
+function closeLogin(){
+
+  $("loginModal")
+    .classList.remove("open");
+
+}
+
+
+function openProfile(){
+
+  $("profileModal")
+    .classList.add("open");
+
+}
+
+
+function closeProfile(){
+
+  $("profileModal")
+    .classList.remove("open");
+
+}
+
+
+function updateUserUI(user){
+
+  currentUser =
+    user || null;
+
+
+  if(!user){
+
+    $("userName").textContent =
+      "Sign in";
+
+    $("avatar").textContent =
+      "G";
+
+    $("menuName").textContent =
+      "Guest User";
+
+    $("menuEmail").textContent =
+      "Sign in to MyCosting";
+
+    $("menuRole").textContent =
+      "Guest";
+
+    $("signOutButton").hidden =
+      true;
+
+    $("accountGuest").hidden =
+      false;
+
+    $("accountUser").hidden =
+      true;
+
+    $("profileName").textContent =
+      "Guest User";
+
+    $("profileEmail").textContent =
+      "Not signed in";
+
+    $("profileRole").textContent =
+      "Guest";
+
+    $("welcomeTitle").textContent =
+      getGreeting();
+
+    return;
+
+  }
+
+
+  const name =
+    user.name ||
+    user.displayName ||
+    user.email ||
+    "MyCosting User";
+
+  const email =
+    user.email ||
+    "";
+
+  const role =
+    user.role ||
+    "User";
+
+
+  $("userName").textContent =
+    name;
+
+  $("avatar").textContent =
+    name
+      .trim()
+      .charAt(0)
+      .toUpperCase();
+
+  $("menuName").textContent =
+    name;
+
+  $("menuEmail").textContent =
+    email;
+
+  $("menuRole").textContent =
+    role;
+
+  $("signOutButton").hidden =
+    false;
+
+  $("accountGuest").hidden =
+    true;
+
+  $("accountUser").hidden =
+    false;
+
+  $("accountName").textContent =
+    name;
+
+  $("accountEmail").textContent =
+    email;
+
+  $("accountRole").textContent =
+    role;
+
+  $("profileName").textContent =
+    name;
+
+  $("profileEmail").textContent =
+    email;
+
+  $("profileRole").textContent =
+    role;
+
+  $("welcomeTitle").textContent =
+    "Welcome, " + name;
+
+}
+
+
+/* =========================================================
+   GREETING
+   ========================================================= */
+
+function getGreeting(){
+
+  const hour =
+    new Date().getHours();
+
+  if(hour < 12){
+    return "Good morning";
+  }
+
+  if(hour < 17){
+    return "Good afternoon";
+  }
+
+  return "Good evening";
+
+}
+
+
+/* =========================================================
+   EVENTS
+   ========================================================= */
+
+$("userButton")
+  .addEventListener(
+    "click",
+    function(){
+
+      if(currentUser){
+
+        $("profileMenu")
+          .classList.toggle("open");
+
+      }else{
+
+        openLogin();
+
+      }
+
+    }
+  );
+
+
+$("accountSignIn")
+  .addEventListener(
+    "click",
+    openLogin
+  );
+
+
+$("profileButton")
+  .addEventListener(
+    "click",
+    function(){
+
+      $("profileMenu")
+        .classList.remove("open");
+
+      openProfile();
+
+    }
+  );
+
+
+$("closeLogin")
+  .addEventListener(
+    "click",
+    closeLogin
+  );
+
+
+$("closeProfile")
+  .addEventListener(
+    "click",
+    closeProfile
+  );
+
+
+$("signOutButton")
+  .addEventListener(
+    "click",
+    function(){
+
+      /*
+       Real Firebase sign-out will be
+       connected here later.
+      */
+
+      updateUserUI(null);
+
+      $("profileMenu")
+        .classList.remove("open");
+
+    }
+  );
+
+
+$("loginForm")
+  .addEventListener(
+    "submit",
+    function(event){
+
+      event.preventDefault();
+
+      const email =
+        $("loginEmail")
+          .value
+          .trim();
+
+      const password =
+        $("loginPassword")
+          .value;
+
+      if(!email || !password){
+
+        $("loginMessage")
+          .textContent =
+          "Please enter your email and password.";
+
+        return;
+
+      }
+
+      /*
+       IMPORTANT:
+       This is intentionally only the UI layer.
+
+       Do NOT store passwords in localStorage.
+
+       Firebase Authentication should be connected
+       here for real production authentication.
+      */
+
+      $("loginMessage")
+        .textContent =
+        "Authentication is not connected yet. Your login screen is ready for Firebase Authentication.";
+
+    }
+  );
+
+
+$("forgotPassword")
+  .addEventListener(
+    "click",
+    function(event){
+
+      event.preventDefault();
+
+      $("loginMessage")
+        .textContent =
+        "Password recovery will be connected through Firebase Authentication.";
+
+    }
+  );
+
+
+$("createAccount")
+  .addEventListener(
+    "click",
+    function(event){
+
+      event.preventDefault();
+
+      $("loginMessage")
+        .textContent =
+        "Account creation will be connected through Firebase Authentication.";
+
+    }
+  );
+
+
+/* Close profile menu when clicking elsewhere */
+
+document.addEventListener(
+  "click",
+  function(event){
+
+    if(
+      !$("userButton").contains(event.target) &&
+      !$("profileMenu").contains(event.target)
+    ){
+
+      $("profileMenu")
+        .classList.remove("open");
+
+    }
 
   }
 );
 
+
+/* Close modal when clicking backdrop */
+
+$("loginModal")
+  .addEventListener(
+    "click",
+    function(event){
+
+      if(event.target === this){
+        closeLogin();
+      }
+
+    }
+  );
+
+
+$("profileModal")
+  .addEventListener(
+    "click",
+    function(event){
+
+      if(event.target === this){
+        closeProfile();
+      }
+
+    }
+  );
+
+
+/* Escape key */
+
+document.addEventListener(
+  "keydown",
+  function(event){
+
+    if(event.key === "Escape"){
+
+      closeLogin();
+      closeProfile();
+
+      $("profileMenu")
+        .classList.remove("open");
+
+    }
+
+  }
+);
+
+
 /* =========================================================
-   STATUS / DATABASE
+   INITIALISE
    ========================================================= */
 
-function status(){
+$("welcomeTitle").textContent =
+  getGreeting();
 
-  $("st").textContent=
-    db
-    ?
-    "· Live shared repository"
-    :
-    "· Showing baseline benchmarks";
+updateUserUI(null);
 
-  $("add").hidden=!canW;
-  $("gate").hidden=canW;
+renderReferenceRates();
 
-}
-
-function ok(v){
-
-  return v &&
-    typeof v.s==="string" &&
-    v.s &&
-    D.indexOf(v.d)>-1 &&
-    typeof v.u==="string" &&
-    isFinite(v.lo) &&
-    isFinite(v.hi) &&
-    v.lo>=0 &&
-    v.hi>=v.lo;
-
-}
 
 /* =========================================================
-   INITIAL DRAW
-   ========================================================= */
-
-draw();
-drawBud();
-refreshImportedRates();
-status();
-
-/* =========================================================
-   LOCAL STORAGE CHANGE DETECTION
+   REFRESH GC BOQ DATA
    ========================================================= */
 
 window.addEventListener(
   "storage",
-  function(e){
+  function(event){
 
-    if(e.key===RATE_LIBRARY_KEY){
+    if(
+      event.key === RATE_LIBRARY_KEY
+    ){
 
-      refreshImportedRates();
+      renderReferenceRates();
 
     }
 
   }
 );
 
+
 /*
-   Same-tab updates are not fired by the browser's
-   storage event. This lightweight refresh checks the
-   Rate Library periodically so that returning to the
-   Dashboard reflects newly saved imports.
+  Lightweight refresh so that when the user returns
+  from Rate Library in the same tab, the Dashboard
+  eventually reflects the latest saved library.
 */
 
 setInterval(
-  function(){
-
-    var latest=
-      loadImportedRates();
-
-    if(
-      latest.length!==importedRates.length
-    ){
-
-      refreshImportedRates();
-
-    }
-
-  },
-  1500
+  renderReferenceRates,
+  3000
 );
-
-/* =========================================================
-   SHARED DATABASE INITIALISATION
-   ========================================================= */
-
-(async function(){
-
-  try{
-
-    if(!window.claude || !claude.use)return;
-
-    var d=await claude.use("db");
-    var u=await claude.use("user");
-
-    db=d;
-
-    if(u){
-
-      uid=await u.id();
-
-      canW=
-        !!d &&
-        u.can("data.write")!==false;
-
-    }
-
-    if(d){
-
-      d.collection("benchmarks")
-        .onSnapshot(
-
-          function(s){
-
-            U=s.docs
-              .map(function(x){
-
-                var v=x.data()||{};
-
-                return ok(v)
-                  ?
-                  [
-                    v.s,
-                    v.d,
-                    v.u,
-                    +v.lo,
-                    +v.hi,
-                    B.indexOf(v.b)>-1
-                      ?
-                      B.indexOf(v.b)
-                      :
-                      3,
-                    x.id
-                  ]
-                  :
-                  null;
-
-              })
-              .filter(Boolean);
-
-            draw();
-            drawBud();
-
-          },
-
-          function(){}
-
-        );
-
-    }
-
-  }catch(e){}
-
-  status();
-
-})();
-
-})();
 
 </script>
 
