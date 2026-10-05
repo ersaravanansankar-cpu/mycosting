@@ -9,35 +9,49 @@
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
+
 :root{
-  --bg:#eef1f3;
+  --bg:#eef2f4;
   --panel:#ffffff;
+  --panel-soft:#f7f9fa;
   --ink:#17232e;
-  --mute:#64727d;
-  --line:#d6dce0;
-  --accent:#0f7b8a;
-  --accent-dark:#0b6673;
-  --hi:#e5f3f5;
-  --onacc:#ffffff;
-  --success:#2e7d32;
+  --mute:#667680;
+  --line:#d8e0e4;
+  --accent:#087f8d;
+  --accent-dark:#056773;
+  --accent-soft:#e4f4f6;
+  --success:#27803b;
+  --success-soft:#e8f6eb;
+  --warning:#b7791f;
+  --warning-soft:#fff5df;
   --danger:#b42318;
-  --shadow:0 2px 10px rgba(23,35,46,.07);
+  --danger-soft:#fdecea;
+  --shadow:0 3px 16px rgba(23,35,46,.07);
+  --shadow-hover:0 8px 28px rgba(23,35,46,.12);
+  --radius:10px;
 
   box-sizing:border-box;
 }
 
 @media (prefers-color-scheme:dark){
   :root:not([data-theme="light"]){
-    --bg:#121a21;
-    --panel:#1b262f;
-    --ink:#e8edf0;
-    --mute:#9aa8b3;
-    --line:#2f3d48;
-    --accent:#4cc3d3;
-    --accent-dark:#35a9b9;
-    --hi:#1f3a42;
-    --onacc:#0b1a1e;
-    --shadow:0 2px 10px rgba(0,0,0,.22);
+    --bg:#11191f;
+    --panel:#1a252d;
+    --panel-soft:#202d35;
+    --ink:#e9eef1;
+    --mute:#9baab4;
+    --line:#30404a;
+    --accent:#4bc5d4;
+    --accent-dark:#39aab9;
+    --accent-soft:#193b42;
+    --success:#62c978;
+    --success-soft:#19351f;
+    --warning:#e2b35c;
+    --warning-soft:#3a301c;
+    --danger:#ef766c;
+    --danger-soft:#3b211f;
+    --shadow:0 4px 18px rgba(0,0,0,.20);
+    --shadow-hover:0 10px 32px rgba(0,0,0,.30);
   }
 }
 
@@ -51,7 +65,9 @@ html{
 
 body{
   margin:0;
-  background:var(--bg);
+  background:
+    radial-gradient(circle at 80% 0%,rgba(8,127,141,.07),transparent 28%),
+    var(--bg);
   color:var(--ink);
   font:400 16px/1.5 "Source Sans 3",system-ui,sans-serif;
 }
@@ -72,8 +88,12 @@ button{
   cursor:pointer;
 }
 
+a{
+  -webkit-tap-highlight-color:transparent;
+}
+
 .wrap{
-  width:min(1180px,calc(100% - 32px));
+  width:min(1220px,calc(100% - 32px));
   margin:auto;
 }
 
@@ -85,7 +105,8 @@ header{
   position:sticky;
   top:0;
   z-index:1000;
-  background:var(--panel);
+  background:rgba(255,255,255,.94);
+  backdrop-filter:blur(14px);
   border-bottom:1px solid var(--line);
   box-shadow:var(--shadow);
 }
@@ -94,7 +115,7 @@ header{
   min-height:72px;
   display:flex;
   align-items:center;
-  gap:28px;
+  gap:25px;
 }
 
 .brand{
@@ -103,14 +124,14 @@ header{
 
 .brand-main{
   font:800 23px Archivo,sans-serif;
-  letter-spacing:-.03em;
+  letter-spacing:-.04em;
 }
 
 .brand-sub{
   color:var(--mute);
   font-size:11px;
   margin-top:-2px;
-  letter-spacing:.04em;
+  letter-spacing:.05em;
 }
 
 .main-nav{
@@ -124,23 +145,25 @@ header{
   color:var(--ink);
   text-decoration:none;
   padding:9px 11px;
-  border-radius:5px;
+  border-radius:6px;
   font-weight:600;
   white-space:nowrap;
-  transition:.15s;
+  transition:.18s ease;
 }
 
 .main-nav a:hover{
-  background:var(--hi);
+  background:var(--accent-soft);
+  color:var(--accent);
 }
 
 .main-nav a.active{
   background:var(--accent);
-  color:var(--onacc);
+  color:white;
+  box-shadow:0 4px 12px rgba(8,127,141,.18);
 }
 
 /* =========================================================
-   USER AREA
+   USER
    ========================================================= */
 
 .user-area{
@@ -155,21 +178,23 @@ header{
   border:1px solid var(--line);
   background:var(--panel);
   color:var(--ink);
-  border-radius:6px;
-  padding:8px 11px;
+  border-radius:8px;
+  padding:6px 10px 6px 7px;
   font-weight:600;
+  transition:.18s;
 }
 
 .signin-btn:hover{
   border-color:var(--accent);
+  box-shadow:0 4px 12px rgba(8,127,141,.10);
 }
 
 .avatar{
-  width:30px;
-  height:30px;
+  width:31px;
+  height:31px;
   border-radius:50%;
   background:var(--accent);
-  color:var(--onacc);
+  color:white;
   display:grid;
   place-items:center;
   font:700 13px Archivo,sans-serif;
@@ -185,21 +210,27 @@ header{
   display:none;
   position:absolute;
   right:0;
-  top:calc(100% + 9px);
-  width:260px;
+  top:calc(100% + 10px);
+  width:270px;
   background:var(--panel);
   border:1px solid var(--line);
-  border-radius:8px;
-  box-shadow:0 10px 30px rgba(0,0,0,.12);
+  border-radius:10px;
+  box-shadow:0 15px 45px rgba(0,0,0,.15);
   overflow:hidden;
 }
 
 .profile-menu.open{
   display:block;
+  animation:menuIn .18s ease;
+}
+
+@keyframes menuIn{
+  from{opacity:0;transform:translateY(-5px)}
+  to{opacity:1;transform:translateY(0)}
 }
 
 .profile-top{
-  padding:16px;
+  padding:17px;
   border-bottom:1px solid var(--line);
 }
 
@@ -217,26 +248,26 @@ header{
 .profile-role{
   display:inline-block;
   margin-top:9px;
-  padding:3px 7px;
-  border-radius:4px;
-  background:var(--hi);
+  padding:4px 8px;
+  border-radius:5px;
+  background:var(--accent-soft);
   color:var(--accent);
-  font-size:12px;
-  font-weight:700;
+  font-size:11px;
+  font-weight:800;
+  text-transform:uppercase;
 }
 
 .profile-menu button{
   width:100%;
   text-align:left;
   border:0;
-  border-radius:0;
   background:transparent;
-  padding:11px 16px;
+  padding:12px 16px;
   color:var(--ink);
 }
 
 .profile-menu button:hover{
-  background:var(--hi);
+  background:var(--accent-soft);
 }
 
 /* =========================================================
@@ -244,11 +275,11 @@ header{
    ========================================================= */
 
 main{
-  padding-bottom:60px;
+  padding-bottom:65px;
 }
 
 .dashboard-head{
-  padding:42px 0 26px;
+  padding:38px 0 23px;
   display:flex;
   align-items:flex-end;
   justify-content:space-between;
@@ -257,20 +288,21 @@ main{
 
 .dashboard-kicker{
   color:var(--accent);
-  font-weight:700;
-  font-size:13px;
+  font-weight:800;
+  font-size:12px;
   text-transform:uppercase;
-  letter-spacing:.08em;
+  letter-spacing:.1em;
 }
 
 .dashboard-head h1{
   font-size:clamp(30px,5vw,44px);
-  margin-top:4px;
+  margin-top:5px;
+  letter-spacing:-.04em;
 }
 
 .dashboard-head p{
   color:var(--mute);
-  max-width:650px;
+  max-width:700px;
   margin:10px 0 0;
 }
 
@@ -289,19 +321,232 @@ main{
   background:var(--panel);
   color:var(--ink);
   padding:9px 13px;
-  border-radius:5px;
+  border-radius:7px;
   text-decoration:none;
-  font-weight:600;
+  font-weight:700;
+  transition:.18s;
 }
 
 .btn:hover{
   border-color:var(--accent);
+  transform:translateY(-1px);
 }
 
 .btn.primary{
   background:var(--accent);
   border-color:var(--accent);
-  color:var(--onacc);
+  color:white;
+}
+
+/* =========================================================
+   LIVE CONTROL BAR
+   ========================================================= */
+
+.live-grid{
+  display:grid;
+  grid-template-columns:1.15fr 1fr 1fr;
+  gap:12px;
+  margin-bottom:17px;
+}
+
+.live-card{
+  position:relative;
+  overflow:hidden;
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  padding:17px;
+  box-shadow:var(--shadow);
+}
+
+.live-card::after{
+  content:"";
+  position:absolute;
+  width:90px;
+  height:90px;
+  right:-35px;
+  top:-35px;
+  border-radius:50%;
+  background:var(--accent-soft);
+}
+
+.live-label{
+  position:relative;
+  z-index:1;
+  color:var(--mute);
+  font-size:11px;
+  font-weight:800;
+  text-transform:uppercase;
+  letter-spacing:.09em;
+}
+
+.live-main{
+  position:relative;
+  z-index:1;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-top:6px;
+}
+
+.live-value{
+  font:800 25px Archivo,sans-serif;
+  letter-spacing:-.03em;
+}
+
+.live-sub{
+  position:relative;
+  z-index:1;
+  color:var(--mute);
+  font-size:13px;
+  margin-top:3px;
+}
+
+.live-dot{
+  width:9px;
+  height:9px;
+  border-radius:50%;
+  background:var(--success);
+  box-shadow:0 0 0 4px var(--success-soft);
+  animation:pulse 1.8s infinite;
+}
+
+@keyframes pulse{
+  0%,100%{box-shadow:0 0 0 3px var(--success-soft)}
+  50%{box-shadow:0 0 0 7px transparent}
+}
+
+.clock{
+  font:800 28px Archivo,sans-serif;
+  letter-spacing:-.04em;
+}
+
+.date-text{
+  color:var(--mute);
+  font-size:13px;
+}
+
+/* =========================================================
+   TODAY RATE WATCH
+   ========================================================= */
+
+.rate-watch{
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+  overflow:hidden;
+  margin-bottom:18px;
+}
+
+.rate-watch-head{
+  padding:17px 19px;
+  border-bottom:1px solid var(--line);
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:15px;
+}
+
+.rate-title{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.rate-title h2{
+  font-size:20px;
+}
+
+.today-badge{
+  padding:4px 8px;
+  background:var(--accent-soft);
+  color:var(--accent);
+  border-radius:5px;
+  font-size:10px;
+  font-weight:800;
+  text-transform:uppercase;
+}
+
+.rate-update{
+  color:var(--mute);
+  font-size:12px;
+}
+
+.rate-grid{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+}
+
+.market-rate{
+  padding:16px;
+  border-right:1px solid var(--line);
+  transition:.18s;
+}
+
+.market-rate:last-child{
+  border-right:0;
+}
+
+.market-rate:hover{
+  background:var(--panel-soft);
+}
+
+.market-name{
+  font-weight:700;
+  font-size:14px;
+}
+
+.market-unit{
+  color:var(--mute);
+  font-size:11px;
+  margin-top:1px;
+}
+
+.market-value{
+  font:800 20px Archivo,sans-serif;
+  margin-top:9px;
+}
+
+.market-change{
+  display:flex;
+  align-items:center;
+  gap:5px;
+  margin-top:4px;
+  font-size:12px;
+  font-weight:700;
+}
+
+.change-up{
+  color:var(--danger);
+}
+
+.change-down{
+  color:var(--success);
+}
+
+.change-flat{
+  color:var(--mute);
+}
+
+.market-source{
+  color:var(--mute);
+  font-size:10px;
+  margin-top:7px;
+}
+
+.market-live{
+  display:inline-flex;
+  align-items:center;
+  gap:4px;
+}
+
+.market-live::before{
+  content:"";
+  width:5px;
+  height:5px;
+  border-radius:50%;
+  background:var(--success);
 }
 
 /* =========================================================
@@ -315,37 +560,72 @@ main{
 }
 
 .card{
+  position:relative;
+  overflow:hidden;
   background:var(--panel);
   border:1px solid var(--line);
-  border-radius:7px;
+  border-radius:var(--radius);
   padding:17px;
   box-shadow:var(--shadow);
+  transition:.2s;
+}
+
+.card:hover{
+  transform:translateY(-2px);
+  box-shadow:var(--shadow-hover);
+}
+
+.card-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
 }
 
 .card-label{
   color:var(--mute);
-  font-size:13px;
-  font-weight:600;
+  font-size:12px;
+  font-weight:700;
+}
+
+.card-icon{
+  width:31px;
+  height:31px;
+  display:grid;
+  place-items:center;
+  border-radius:7px;
+  background:var(--accent-soft);
+  color:var(--accent);
+  font-size:12px;
+  font-weight:800;
 }
 
 .card-value{
-  margin-top:4px;
+  margin-top:7px;
   font:800 27px Archivo,sans-serif;
+  letter-spacing:-.03em;
 }
 
 .card-sub{
   margin-top:4px;
   color:var(--mute);
-  font-size:13px;
+  font-size:12px;
+}
+
+.card-status{
+  margin-top:9px;
+  font-size:11px;
+  color:var(--success);
+  font-weight:700;
 }
 
 /* =========================================================
-   WORKSPACE GRID
+   WORKSPACE
    ========================================================= */
 
 .workspace{
   display:grid;
-  grid-template-columns:minmax(0,2fr) minmax(280px,1fr);
+  grid-template-columns:minmax(0,2fr) minmax(290px,1fr);
   gap:16px;
   margin-top:18px;
 }
@@ -353,8 +633,9 @@ main{
 .panel{
   background:var(--panel);
   border:1px solid var(--line);
-  border-radius:7px;
+  border-radius:var(--radius);
   box-shadow:var(--shadow);
+  overflow:hidden;
 }
 
 .panel-head{
@@ -367,14 +648,14 @@ main{
 }
 
 .panel-head h2{
-  font-size:20px;
+  font-size:19px;
 }
 
 .panel-head a{
   color:var(--accent);
   text-decoration:none;
-  font-weight:600;
-  font-size:14px;
+  font-weight:700;
+  font-size:13px;
 }
 
 .panel-body{
@@ -392,43 +673,76 @@ main{
 }
 
 .module{
+  display:block;
   border:1px solid var(--line);
-  border-radius:6px;
+  border-radius:8px;
   padding:14px;
   text-decoration:none;
   color:var(--ink);
-  transition:.15s;
+  transition:.18s;
 }
 
 .module:hover{
   border-color:var(--accent);
-  background:var(--hi);
+  background:var(--accent-soft);
+  transform:translateY(-2px);
 }
 
 .module-icon{
-  width:34px;
-  height:34px;
-  border-radius:6px;
-  background:var(--hi);
+  width:35px;
+  height:35px;
+  border-radius:7px;
+  background:var(--accent-soft);
   color:var(--accent);
   display:grid;
   place-items:center;
+  font-size:11px;
   font-weight:800;
   margin-bottom:10px;
 }
 
 .module-title{
-  font-weight:700;
+  font-weight:800;
 }
 
 .module-description{
   color:var(--mute);
-  font-size:13px;
+  font-size:12px;
   margin-top:3px;
 }
 
 /* =========================================================
-   REFERENCE TABLE
+   DISCIPLINE FILTER
+   ========================================================= */
+
+.filter-row{
+  display:flex;
+  gap:7px;
+  overflow:auto;
+  padding:12px 18px;
+  border-bottom:1px solid var(--line);
+}
+
+.filter-btn{
+  border:1px solid var(--line);
+  background:var(--panel);
+  color:var(--mute);
+  border-radius:20px;
+  padding:6px 11px;
+  font-size:11px;
+  font-weight:700;
+  white-space:nowrap;
+}
+
+.filter-btn:hover,
+.filter-btn.active{
+  background:var(--accent);
+  color:white;
+  border-color:var(--accent);
+}
+
+/* =========================================================
+   TABLE
    ========================================================= */
 
 .table-wrap{
@@ -438,7 +752,7 @@ main{
 table{
   width:100%;
   border-collapse:collapse;
-  min-width:650px;
+  min-width:700px;
 }
 
 th,
@@ -454,39 +768,78 @@ tr:last-child td{
 }
 
 th{
-  font:600 13px Archivo,sans-serif;
+  font:600 12px Archivo,sans-serif;
   color:var(--mute);
+  background:var(--panel-soft);
+}
+
+tr:hover td{
+  background:var(--panel-soft);
 }
 
 td.rate{
   text-align:right;
-  font-weight:700;
+  font-weight:800;
   white-space:nowrap;
 }
 
 .badge{
   display:inline-block;
-  padding:3px 7px;
-  border-radius:4px;
-  background:var(--hi);
+  padding:4px 8px;
+  border-radius:5px;
+  background:var(--accent-soft);
   color:var(--accent);
-  font-size:11px;
-  font-weight:700;
+  font-size:10px;
+  font-weight:800;
 }
 
 .muted{
   color:var(--mute);
-  font-size:13px;
+  font-size:12px;
 }
 
 .empty{
-  padding:28px 15px;
+  padding:32px 15px;
   text-align:center;
   color:var(--mute);
 }
 
 /* =========================================================
-   QUICK LINKS
+   ACTIVITY
+   ========================================================= */
+
+.activity{
+  display:grid;
+  gap:12px;
+}
+
+.activity-item{
+  display:flex;
+  gap:10px;
+  align-items:flex-start;
+}
+
+.activity-dot{
+  width:8px;
+  height:8px;
+  margin-top:7px;
+  flex:0 0 auto;
+  border-radius:50%;
+  background:var(--accent);
+}
+
+.activity-text{
+  font-size:13px;
+}
+
+.activity-time{
+  color:var(--mute);
+  font-size:11px;
+  margin-top:2px;
+}
+
+/* =========================================================
+   QUICK ACTIONS
    ========================================================= */
 
 .quick-list{
@@ -500,15 +853,18 @@ td.rate{
   align-items:center;
   gap:12px;
   border:1px solid var(--line);
-  border-radius:5px;
+  border-radius:7px;
   padding:11px 12px;
   text-decoration:none;
   color:var(--ink);
+  font-weight:600;
+  transition:.18s;
 }
 
 .quick-link:hover{
   border-color:var(--accent);
-  background:var(--hi);
+  background:var(--accent-soft);
+  transform:translateX(2px);
 }
 
 .quick-link span:last-child{
@@ -516,7 +872,32 @@ td.rate{
 }
 
 /* =========================================================
-   LOGIN MODAL
+   ACCOUNT
+   ========================================================= */
+
+.account-status{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  padding:10px;
+  border-radius:7px;
+  background:var(--panel-soft);
+  margin-bottom:12px;
+}
+
+.account-status-dot{
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  background:var(--success);
+}
+
+.account-status strong{
+  font-size:13px;
+}
+
+/* =========================================================
+   MODALS
    ========================================================= */
 
 .modal{
@@ -524,7 +905,7 @@ td.rate{
   position:fixed;
   inset:0;
   z-index:2000;
-  background:rgba(10,20,25,.55);
+  background:rgba(10,20,25,.58);
   padding:20px;
   align-items:center;
   justify-content:center;
@@ -535,12 +916,24 @@ td.rate{
 }
 
 .modal-box{
-  width:min(420px,100%);
+  width:min(430px,100%);
   background:var(--panel);
   border:1px solid var(--line);
-  border-radius:9px;
-  box-shadow:0 20px 60px rgba(0,0,0,.2);
+  border-radius:11px;
+  box-shadow:0 25px 80px rgba(0,0,0,.25);
   padding:24px;
+  animation:modalIn .2s ease;
+}
+
+@keyframes modalIn{
+  from{
+    opacity:0;
+    transform:translateY(8px) scale(.98);
+  }
+  to{
+    opacity:1;
+    transform:none;
+  }
 }
 
 .modal-head{
@@ -580,7 +973,13 @@ td.rate{
   border:1px solid var(--line);
   background:var(--panel);
   color:var(--ink);
-  border-radius:5px;
+  border-radius:6px;
+  outline:none;
+}
+
+.form-group input:focus{
+  border-color:var(--accent);
+  box-shadow:0 0 0 3px var(--accent-soft);
 }
 
 .login-submit{
@@ -588,9 +987,9 @@ td.rate{
   padding:11px;
   border:1px solid var(--accent);
   background:var(--accent);
-  color:var(--onacc);
-  border-radius:5px;
-  font-weight:700;
+  color:white;
+  border-radius:6px;
+  font-weight:800;
   margin-top:5px;
 }
 
@@ -615,45 +1014,6 @@ td.rate{
 }
 
 /* =========================================================
-   PROFILE MODAL
-   ========================================================= */
-
-.profile-form{
-  display:none;
-}
-
-.profile-form.open{
-  display:block;
-}
-
-.profile-view{
-  display:block;
-}
-
-.profile-view.hidden{
-  display:none;
-}
-
-.profile-field{
-  padding:10px 0;
-  border-bottom:1px solid var(--line);
-}
-
-.profile-field:last-child{
-  border-bottom:0;
-}
-
-.profile-label{
-  color:var(--mute);
-  font-size:12px;
-}
-
-.profile-value{
-  font-weight:600;
-  margin-top:2px;
-}
-
-/* =========================================================
    FOOTER
    ========================================================= */
 
@@ -661,7 +1021,7 @@ footer{
   border-top:1px solid var(--line);
   padding:26px 0;
   color:var(--mute);
-  font-size:14px;
+  font-size:13px;
 }
 
 .footer-inner{
@@ -674,6 +1034,38 @@ footer{
 /* =========================================================
    MOBILE
    ========================================================= */
+
+@media(max-width:1050px){
+
+  .live-grid{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .live-grid .live-card:first-child{
+    grid-column:1/-1;
+  }
+
+  .rate-grid{
+    grid-template-columns:repeat(3,1fr);
+  }
+
+  .market-rate:nth-child(3){
+    border-right:0;
+  }
+
+  .market-rate:nth-child(n+4){
+    border-top:1px solid var(--line);
+  }
+
+  .cards{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .workspace{
+    grid-template-columns:1fr;
+  }
+
+}
 
 @media(max-width:950px){
 
@@ -689,20 +1081,12 @@ footer{
     padding-bottom:2px;
   }
 
-  .cards{
-    grid-template-columns:repeat(2,1fr);
-  }
-
-  .workspace{
-    grid-template-columns:1fr;
-  }
-
 }
 
-@media(max-width:600px){
+@media(max-width:650px){
 
   .wrap{
-    width:min(100% - 24px,1180px);
+    width:min(100% - 24px,1220px);
   }
 
   .brand-sub{
@@ -712,7 +1096,7 @@ footer{
   .dashboard-head{
     align-items:flex-start;
     flex-direction:column;
-    padding-top:30px;
+    padding-top:28px;
   }
 
   .head-actions{
@@ -721,6 +1105,32 @@ footer{
 
   .head-actions .btn{
     flex:1;
+  }
+
+  .live-grid{
+    grid-template-columns:1fr;
+  }
+
+  .live-grid .live-card:first-child{
+    grid-column:auto;
+  }
+
+  .rate-grid{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .market-rate{
+    border-right:1px solid var(--line);
+    border-top:1px solid var(--line);
+  }
+
+  .market-rate:nth-child(1),
+  .market-rate:nth-child(2){
+    border-top:0;
+  }
+
+  .market-rate:nth-child(even){
+    border-right:0;
   }
 
   .cards{
@@ -742,15 +1152,46 @@ footer{
   .user-name{
     display:none;
   }
+
 }
+
+@media(max-width:420px){
+
+  .cards{
+    grid-template-columns:1fr;
+  }
+
+  .rate-grid{
+    grid-template-columns:1fr;
+  }
+
+  .market-rate,
+  .market-rate:nth-child(even){
+    border-right:0;
+  }
+
+  .market-rate:nth-child(2){
+    border-top:1px solid var(--line);
+  }
+
+}
+
+@media(prefers-reduced-motion:reduce){
+
+  *,
+  *::before,
+  *::after{
+    animation:none!important;
+    transition:none!important;
+    scroll-behavior:auto!important;
+  }
+
+}
+
 </style>
 </head>
 
 <body>
-
-<!-- =========================================================
-     HEADER
-     ========================================================= -->
 
 <header>
 
@@ -763,33 +1204,14 @@ footer{
 
     <nav class="main-nav" aria-label="Main navigation">
 
-      <a href="index.html" class="active">
-        Dashboard
-      </a>
-
-      <a href="rate-analysis.html">
-        Rate Analysis
-      </a>
-
-      <a href="rate-library.html">
-        Rate Library
-      </a>
-
-      <a href="boq.html">
-        BOQ
-      </a>
-
-      <a href="projects.html">
-        Projects
-      </a>
-
-      <a href="reports.html">
-        Reports
-      </a>
+      <a href="index.html" class="active">Dashboard</a>
+      <a href="rate-analysis.html">Rate Analysis</a>
+      <a href="rate-library.html">Rate Library</a>
+      <a href="boq.html">BOQ</a>
+      <a href="projects.html">Projects</a>
+      <a href="reports.html">Reports</a>
 
     </nav>
-
-    <!-- USER / SIGN IN -->
 
     <div class="user-area">
 
@@ -799,57 +1221,32 @@ footer{
         type="button"
       >
 
-        <span
-          class="avatar"
-          id="avatar"
-        >G</span>
-
-        <span
-          class="user-name"
-          id="userName"
-        >Sign in</span>
+        <span class="avatar" id="avatar">G</span>
+        <span class="user-name" id="userName">Sign in</span>
 
       </button>
 
-      <div
-        class="profile-menu"
-        id="profileMenu"
-      >
+      <div class="profile-menu" id="profileMenu">
 
         <div class="profile-top">
 
-          <strong id="menuName">
-            Guest User
-          </strong>
+          <strong id="menuName">Guest User</strong>
 
-          <div
-            class="profile-email"
-            id="menuEmail"
-          >
+          <div class="profile-email" id="menuEmail">
             Sign in to MyCosting
           </div>
 
-          <span
-            class="profile-role"
-            id="menuRole"
-          >
+          <span class="profile-role" id="menuRole">
             Guest
           </span>
 
         </div>
 
-        <button
-          type="button"
-          id="profileButton"
-        >
+        <button type="button" id="profileButton">
           My Profile
         </button>
 
-        <button
-          type="button"
-          id="signOutButton"
-          hidden
-        >
+        <button type="button" id="signOutButton" hidden>
           Sign out
         </button>
 
@@ -862,481 +1259,907 @@ footer{
 </header>
 
 
-<!-- =========================================================
-     MAIN DASHBOARD
-     ========================================================= -->
-
 <main>
 
-  <div class="wrap">
+<div class="wrap">
 
-    <section class="dashboard-head">
 
-      <div>
+<!-- =====================================================
+     DASHBOARD HEADER
+     ===================================================== -->
 
-        <div class="dashboard-kicker">
-          Cost Management Workspace
-        </div>
+<section class="dashboard-head">
 
-        <h1 id="welcomeTitle">
-          Good evening
-        </h1>
+  <div>
 
-        <p>
-          Manage construction benchmarks, GC BOQ reference rates,
-          rate analysis and project cost information from one place.
-        </p>
+    <div class="dashboard-kicker">
+      Cost Management Workspace
+    </div>
 
-      </div>
+    <h1 id="welcomeTitle">
+      Good evening
+    </h1>
 
-      <div class="head-actions">
-
-        <a
-          class="btn"
-          href="rate-library.html"
-        >
-          + Import GC BOQ
-        </a>
-
-        <a
-          class="btn primary"
-          href="rate-analysis.html"
-        >
-          + Rate Analysis
-        </a>
-
-      </div>
-
-    </section>
-
-
-    <!-- =====================================================
-         SUMMARY CARDS
-         ===================================================== -->
-
-    <section class="cards">
-
-      <div class="card">
-
-        <div class="card-label">
-          GC BOQ Items
-        </div>
-
-        <div
-          class="card-value"
-          id="cardItems"
-        >
-          0
-        </div>
-
-        <div class="card-sub">
-          Imported reference rates
-        </div>
-
-      </div>
-
-
-      <div class="card">
-
-        <div class="card-label">
-          Rated Items
-        </div>
-
-        <div
-          class="card-value"
-          id="cardRated"
-        >
-          0
-        </div>
-
-        <div class="card-sub">
-          Items with BOQ rates
-        </div>
-
-      </div>
-
-
-      <div class="card">
-
-        <div class="card-label">
-          BOQ Reference Value
-        </div>
-
-        <div
-          class="card-value"
-          id="cardValue"
-        >
-          ₹0
-        </div>
-
-        <div class="card-sub">
-          Imported source value
-        </div>
-
-      </div>
-
-
-      <div class="card">
-
-        <div class="card-label">
-          Active Sources
-        </div>
-
-        <div
-          class="card-value"
-          id="cardSources"
-        >
-          0
-        </div>
-
-        <div class="card-sub">
-          Projects / Excel sources
-        </div>
-
-      </div>
-
-    </section>
-
-
-    <!-- =====================================================
-         WORKSPACE
-         ===================================================== -->
-
-    <section class="workspace">
-
-      <!-- LEFT -->
-      <div>
-
-        <!-- MODULES -->
-
-        <div class="panel">
-
-          <div class="panel-head">
-
-            <h2>
-              Cost Management
-            </h2>
-
-          </div>
-
-          <div class="panel-body">
-
-            <div class="module-grid">
-
-              <a
-                class="module"
-                href="rate-analysis.html"
-              >
-
-                <div class="module-icon">
-                  RA
-                </div>
-
-                <div class="module-title">
-                  Rate Analysis
-                </div>
-
-                <div class="module-description">
-                  Build detailed material, labour and equipment rates.
-                </div>
-
-              </a>
-
-
-              <a
-                class="module"
-                href="rate-library.html"
-              >
-
-                <div class="module-icon">
-                  RL
-                </div>
-
-                <div class="module-title">
-                  Rate Library
-                </div>
-
-                <div class="module-description">
-                  Import and classify GC BOQ rates discipline-wise.
-                </div>
-
-              </a>
-
-
-              <a
-                class="module"
-                href="boq.html"
-              >
-
-                <div class="module-icon">
-                  BQ
-                </div>
-
-                <div class="module-title">
-                  BOQ
-                </div>
-
-                <div class="module-description">
-                  Manage quantities, items, rates and BOQ values.
-                </div>
-
-              </a>
-
-
-              <a
-                class="module"
-                href="projects.html"
-              >
-
-                <div class="module-icon">
-                  PR
-                </div>
-
-                <div class="module-title">
-                  Projects
-                </div>
-
-                <div class="module-description">
-                  Organise cost data by project and package.
-                </div>
-
-              </a>
-
-            </div>
-
-          </div>
-
-        </div>
-
-
-        <!-- GC BOQ REFERENCES -->
-
-        <div class="panel" style="margin-top:16px;">
-
-          <div class="panel-head">
-
-            <h2>
-              GC BOQ Reference Rates
-            </h2>
-
-            <a href="rate-library.html">
-              View Rate Library →
-            </a>
-
-          </div>
-
-          <div class="table-wrap">
-
-            <table>
-
-              <thead>
-
-                <tr>
-                  <th>Discipline</th>
-                  <th>Item</th>
-                  <th>Unit</th>
-                  <th style="text-align:right;">
-                    Rate
-                  </th>
-                  <th>Source</th>
-                </tr>
-
-              </thead>
-
-              <tbody id="referenceRows">
-
-              </tbody>
-
-            </table>
-
-          </div>
-
-        </div>
-
-      </div>
-
-
-      <!-- RIGHT -->
-
-      <aside>
-
-        <!-- QUICK ACTIONS -->
-
-        <div class="panel">
-
-          <div class="panel-head">
-
-            <h2>
-              Quick Actions
-            </h2>
-
-          </div>
-
-          <div class="panel-body">
-
-            <div class="quick-list">
-
-              <a
-                class="quick-link"
-                href="rate-library.html"
-              >
-                <span>
-                  Import GC BOQ
-                </span>
-                <span>→</span>
-              </a>
-
-              <a
-                class="quick-link"
-                href="rate-analysis.html"
-              >
-                <span>
-                  Create Rate Analysis
-                </span>
-                <span>→</span>
-              </a>
-
-              <a
-                class="quick-link"
-                href="boq.html"
-              >
-                <span>
-                  Create BOQ
-                </span>
-                <span>→</span>
-              </a>
-
-              <a
-                class="quick-link"
-                href="projects.html"
-              >
-                <span>
-                  Open Projects
-                </span>
-                <span>→</span>
-              </a>
-
-              <a
-                class="quick-link"
-                href="reports.html"
-              >
-                <span>
-                  Generate Report
-                </span>
-                <span>→</span>
-              </a>
-
-            </div>
-
-          </div>
-
-        </div>
-
-
-        <!-- ACCOUNT -->
-
-        <div
-          class="panel"
-          style="margin-top:16px;"
-        >
-
-          <div class="panel-head">
-
-            <h2>
-              My Account
-            </h2>
-
-          </div>
-
-          <div class="panel-body">
-
-            <div
-              id="accountGuest"
-            >
-
-              <div class="muted">
-                Sign in to save your work,
-                access your profile and eventually
-                sync projects across devices.
-              </div>
-
-              <button
-                class="btn primary"
-                style="width:100%;margin-top:14px;"
-                id="accountSignIn"
-              >
-                Sign in
-              </button>
-
-            </div>
-
-
-            <div
-              id="accountUser"
-              hidden
-            >
-
-              <div class="profile-field">
-
-                <div class="profile-label">
-                  Name
-                </div>
-
-                <div
-                  class="profile-value"
-                  id="accountName"
-                >
-                </div>
-
-              </div>
-
-              <div class="profile-field">
-
-                <div class="profile-label">
-                  Email
-                </div>
-
-                <div
-                  class="profile-value"
-                  id="accountEmail"
-                >
-                </div>
-
-              </div>
-
-              <div class="profile-field">
-
-                <div class="profile-label">
-                  Access
-                </div>
-
-                <div
-                  class="profile-value"
-                  id="accountRole"
-                >
-                  User
-                </div>
-
-              </div>
-
-            </div>
-
-          </div>
-
-        </div>
-
-      </aside>
-
-    </section>
+    <p>
+      Monitor project costs, analyse rates, manage BOQs and build
+      a reliable construction cost reference library.
+    </p>
 
   </div>
 
+  <div class="head-actions">
+
+    <a
+      class="btn"
+      href="rate-library.html"
+    >
+      + Import BOQ
+    </a>
+
+    <a
+      class="btn primary"
+      href="rate-analysis.html"
+    >
+      + Rate Analysis
+    </a>
+
+  </div>
+
+</section>
+
+
+<!-- =====================================================
+     LIVE STATUS
+     ===================================================== -->
+
+<section class="live-grid">
+
+  <div class="live-card">
+
+    <div class="live-label">
+      Live Time
+    </div>
+
+    <div class="live-main">
+
+      <span class="live-dot"></span>
+
+      <span
+        class="clock"
+        id="liveClock"
+      >
+        --:--:--
+      </span>
+
+    </div>
+
+    <div
+      class="live-sub"
+      id="liveDate"
+    >
+      Loading date...
+    </div>
+
+  </div>
+
+
+  <div class="live-card">
+
+    <div class="live-label">
+      Users Online
+    </div>
+
+    <div class="live-main">
+
+      <span class="live-dot"></span>
+
+      <span
+        class="live-value"
+        id="onlineUsers"
+      >
+        —
+      </span>
+
+    </div>
+
+    <div
+      class="live-sub"
+      id="onlineStatus"
+    >
+      Connecting to live presence...
+    </div>
+
+  </div>
+
+
+  <div class="live-card">
+
+    <div class="live-label">
+      System Status
+    </div>
+
+    <div class="live-main">
+
+      <span class="live-dot"></span>
+
+      <span class="live-value">
+        Online
+      </span>
+
+    </div>
+
+    <div class="live-sub">
+      MyCosting dashboard is active
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- =====================================================
+     TODAY'S RATE WATCH
+     ===================================================== -->
+
+<section class="rate-watch">
+
+  <div class="rate-watch-head">
+
+    <div class="rate-title">
+
+      <h2>
+        Today's Rate Watch
+      </h2>
+
+      <span class="today-badge">
+        Market Reference
+      </span>
+
+    </div>
+
+    <div
+      class="rate-update"
+      id="marketUpdated"
+    >
+      Checking latest data...
+    </div>
+
+  </div>
+
+
+  <div
+    class="rate-grid"
+    id="marketRates"
+  >
+
+    <!-- Filled by JavaScript -->
+
+  </div>
+
+</section>
+
+
+<!-- =====================================================
+     SUMMARY
+     ===================================================== -->
+
+<section class="cards">
+
+  <div class="card">
+
+    <div class="card-top">
+
+      <div class="card-label">
+        BOQ ITEMS
+      </div>
+
+      <div class="card-icon">
+        BQ
+      </div>
+
+    </div>
+
+    <div
+      class="card-value"
+      id="cardItems"
+    >
+      0
+    </div>
+
+    <div class="card-sub">
+      Imported reference items
+    </div>
+
+    <div
+      class="card-status"
+      id="cardItemsStatus"
+    >
+      Ready
+    </div>
+
+  </div>
+
+
+  <div class="card">
+
+    <div class="card-top">
+
+      <div class="card-label">
+        RATED ITEMS
+      </div>
+
+      <div class="card-icon">
+        ₹
+      </div>
+
+    </div>
+
+    <div
+      class="card-value"
+      id="cardRated"
+    >
+      0
+    </div>
+
+    <div class="card-sub">
+      Items with valid rates
+    </div>
+
+    <div
+      class="card-status"
+      id="cardRatedStatus"
+    >
+      Ready
+    </div>
+
+  </div>
+
+
+  <div class="card">
+
+    <div class="card-top">
+
+      <div class="card-label">
+        REFERENCE VALUE
+      </div>
+
+      <div class="card-icon">
+        Σ
+      </div>
+
+    </div>
+
+    <div
+      class="card-value"
+      id="cardValue"
+    >
+      ₹0
+    </div>
+
+    <div class="card-sub">
+      Imported source value
+    </div>
+
+    <div class="card-status">
+      Source BOQ value
+    </div>
+
+  </div>
+
+
+  <div class="card">
+
+    <div class="card-top">
+
+      <div class="card-label">
+        ACTIVE SOURCES
+      </div>
+
+      <div class="card-icon">
+        DB
+      </div>
+
+    </div>
+
+    <div
+      class="card-value"
+      id="cardSources"
+    >
+      0
+    </div>
+
+    <div class="card-sub">
+      Projects / files / sources
+    </div>
+
+    <div
+      class="card-status"
+      id="cardSourceStatus"
+    >
+      Ready
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- =====================================================
+     WORKSPACE
+     ===================================================== -->
+
+<section class="workspace">
+
+<div>
+
+
+<!-- =====================================================
+     COST MANAGEMENT
+     ===================================================== -->
+
+<div class="panel">
+
+  <div class="panel-head">
+
+    <h2>
+      Cost Management
+    </h2>
+
+    <span class="muted">
+      Core workspace
+    </span>
+
+  </div>
+
+  <div class="panel-body">
+
+    <div class="module-grid">
+
+      <a
+        class="module"
+        href="rate-analysis.html"
+      >
+
+        <div class="module-icon">
+          RA
+        </div>
+
+        <div class="module-title">
+          Rate Analysis
+        </div>
+
+        <div class="module-description">
+          Build detailed material, labour and equipment rates.
+        </div>
+
+      </a>
+
+
+      <a
+        class="module"
+        href="rate-library.html"
+      >
+
+        <div class="module-icon">
+          RL
+        </div>
+
+        <div class="module-title">
+          Rate Library
+        </div>
+
+        <div class="module-description">
+          Import and classify BOQ rates by discipline and source.
+        </div>
+
+      </a>
+
+
+      <a
+        class="module"
+        href="boq.html"
+      >
+
+        <div class="module-icon">
+          BQ
+        </div>
+
+        <div class="module-title">
+          BOQ
+        </div>
+
+        <div class="module-description">
+          Manage quantities, descriptions, rates and BOQ values.
+        </div>
+
+      </a>
+
+
+      <a
+        class="module"
+        href="projects.html"
+      >
+
+        <div class="module-icon">
+          PR
+        </div>
+
+        <div class="module-title">
+          Projects
+        </div>
+
+        <div class="module-description">
+          Organise cost data by project, package and discipline.
+        </div>
+
+      </a>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- =====================================================
+     BOQ REFERENCE
+     ===================================================== -->
+
+<div
+  class="panel"
+  style="margin-top:16px;"
+>
+
+  <div class="panel-head">
+
+    <h2>
+      BOQ Reference Rates
+    </h2>
+
+    <a href="rate-library.html">
+      Open Rate Library →
+    </a>
+
+  </div>
+
+
+  <div
+    class="filter-row"
+    id="disciplineFilters"
+  >
+
+    <button
+      class="filter-btn active"
+      type="button"
+      data-discipline="All"
+    >
+      All
+    </button>
+
+    <button
+      class="filter-btn"
+      type="button"
+      data-discipline="C&I"
+    >
+      C&I
+    </button>
+
+    <button
+      class="filter-btn"
+      type="button"
+      data-discipline="Electrical"
+    >
+      Electrical
+    </button>
+
+    <button
+      class="filter-btn"
+      type="button"
+      data-discipline="HVAC"
+    >
+      HVAC
+    </button>
+
+    <button
+      class="filter-btn"
+      type="button"
+      data-discipline="Fire"
+    >
+      Fire
+    </button>
+
+    <button
+      class="filter-btn"
+      type="button"
+      data-discipline="PHE"
+    >
+      PHE
+    </button>
+
+    <button
+      class="filter-btn"
+      type="button"
+      data-discipline="ELV"
+    >
+      ELV
+    </button>
+
+    <button
+      class="filter-btn"
+      type="button"
+      data-discipline="Lift"
+    >
+      Lift
+    </button>
+
+    <button
+      class="filter-btn"
+      type="button"
+      data-discipline="Other"
+    >
+      Other
+    </button>
+
+  </div>
+
+
+  <div class="table-wrap">
+
+    <table>
+
+      <thead>
+
+        <tr>
+
+          <th>
+            Discipline
+          </th>
+
+          <th>
+            Item
+          </th>
+
+          <th>
+            Unit
+          </th>
+
+          <th style="text-align:right;">
+            Rate
+          </th>
+
+          <th>
+            Source
+          </th>
+
+        </tr>
+
+      </thead>
+
+      <tbody id="referenceRows">
+
+      </tbody>
+
+    </table>
+
+  </div>
+
+</div>
+
+
+<!-- =====================================================
+     RECENT ACTIVITY
+     ===================================================== -->
+
+<div
+  class="panel"
+  style="margin-top:16px;"
+>
+
+  <div class="panel-head">
+
+    <h2>
+      Recent Activity
+    </h2>
+
+    <span class="muted">
+      This session
+    </span>
+
+  </div>
+
+  <div class="panel-body">
+
+    <div
+      class="activity"
+      id="activityList"
+    >
+
+      <div class="activity-item">
+
+        <span class="activity-dot"></span>
+
+        <div>
+
+          <div class="activity-text">
+            MyCosting dashboard opened.
+          </div>
+
+          <div class="activity-time">
+            Just now
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+</div>
+
+
+<!-- =====================================================
+     RIGHT SIDEBAR
+     ===================================================== -->
+
+<aside>
+
+
+<div class="panel">
+
+  <div class="panel-head">
+
+    <h2>
+      Quick Actions
+    </h2>
+
+  </div>
+
+  <div class="panel-body">
+
+    <div class="quick-list">
+
+      <a
+        class="quick-link"
+        href="rate-library.html"
+        id="quickImport"
+      >
+        <span>Import BOQ</span>
+        <span>→</span>
+      </a>
+
+      <a
+        class="quick-link"
+        href="rate-analysis.html"
+      >
+        <span>Create Rate Analysis</span>
+        <span>→</span>
+      </a>
+
+      <a
+        class="quick-link"
+        href="boq.html"
+      >
+        <span>Create BOQ</span>
+        <span>→</span>
+      </a>
+
+      <a
+        class="quick-link"
+        href="projects.html"
+      >
+        <span>Open Projects</span>
+        <span>→</span>
+      </a>
+
+      <a
+        class="quick-link"
+        href="reports.html"
+      >
+        <span>Generate Report</span>
+        <span>→</span>
+      </a>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- ACCOUNT -->
+
+<div
+  class="panel"
+  style="margin-top:16px;"
+>
+
+  <div class="panel-head">
+
+    <h2>
+      My Account
+    </h2>
+
+  </div>
+
+  <div class="panel-body">
+
+    <div id="accountGuest">
+
+      <div class="account-status">
+
+        <span class="account-status-dot"></span>
+
+        <strong>
+          Guest session
+        </strong>
+
+      </div>
+
+      <div class="muted">
+        Sign in to access your personal workspace,
+        profile and future cloud-synchronised data.
+      </div>
+
+      <button
+        class="btn primary"
+        style="width:100%;margin-top:14px;"
+        id="accountSignIn"
+        type="button"
+      >
+        Sign in
+      </button>
+
+    </div>
+
+
+    <div
+      id="accountUser"
+      hidden
+    >
+
+      <div class="account-status">
+
+        <span class="account-status-dot"></span>
+
+        <strong>
+          Account active
+        </strong>
+
+      </div>
+
+      <div class="profile-field">
+
+        <div class="profile-label">
+          Name
+        </div>
+
+        <div
+          class="profile-value"
+          id="accountName"
+        ></div>
+
+      </div>
+
+      <div class="profile-field">
+
+        <div class="profile-label">
+          Email
+        </div>
+
+        <div
+          class="profile-value"
+          id="accountEmail"
+        ></div>
+
+      </div>
+
+      <div class="profile-field">
+
+        <div class="profile-label">
+          Access
+        </div>
+
+        <div
+          class="profile-value"
+          id="accountRole"
+        >
+          User
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- LIVE DATA INFO -->
+
+<div
+  class="panel"
+  style="margin-top:16px;"
+>
+
+  <div class="panel-head">
+
+    <h2>
+      Data Status
+    </h2>
+
+  </div>
+
+  <div class="panel-body">
+
+    <div class="quick-list">
+
+      <div class="quick-link">
+
+        <span>
+          Clock
+        </span>
+
+        <span style="color:var(--success);">
+          LIVE
+        </span>
+
+      </div>
+
+      <div class="quick-link">
+
+        <span>
+          BOQ Library
+        </span>
+
+        <span id="libraryStatus">
+          LOCAL
+        </span>
+
+      </div>
+
+      <div class="quick-link">
+
+        <span>
+          User Presence
+        </span>
+
+        <span id="presenceStatus">
+          READY
+        </span>
+
+      </div>
+
+      <div class="quick-link">
+
+        <span>
+          Market Rates
+        </span>
+
+        <span id="marketStatus">
+          REFERENCE
+        </span>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+</aside>
+
+</section>
+
+</div>
+
 </main>
 
-
-<!-- =========================================================
-     FOOTER
-     ========================================================= -->
 
 <footer>
 
@@ -1357,9 +2180,9 @@ footer{
 </footer>
 
 
-<!-- =========================================================
+<!-- =====================================================
      LOGIN MODAL
-     ========================================================= -->
+     ===================================================== -->
 
 <div
   class="modal"
@@ -1369,106 +2192,106 @@ footer{
   aria-labelledby="loginTitle"
 >
 
-  <div class="modal-box">
+<div class="modal-box">
 
-    <div class="modal-head">
+  <div class="modal-head">
 
-      <div>
+    <div>
 
-        <h2 id="loginTitle">
-          Sign in
-        </h2>
-
-        <div class="muted">
-          Access your MyCosting workspace.
-        </div>
-
-      </div>
-
-      <button
-        class="close"
-        id="closeLogin"
-        type="button"
-        aria-label="Close"
-      >
-        ×
-      </button>
-
-    </div>
-
-
-    <form id="loginForm">
-
-      <div class="form-group">
-
-        <label for="loginEmail">
-          Email address
-        </label>
-
-        <input
-          id="loginEmail"
-          type="email"
-          autocomplete="email"
-          required
-          placeholder="name@example.com"
-        >
-
-      </div>
-
-
-      <div class="form-group">
-
-        <label for="loginPassword">
-          Password
-        </label>
-
-        <input
-          id="loginPassword"
-          type="password"
-          autocomplete="current-password"
-          required
-          placeholder="Password"
-        >
-
-      </div>
-
-
-      <button
-        class="login-submit"
-        type="submit"
-      >
+      <h2 id="loginTitle">
         Sign in
-      </button>
+      </h2>
 
-    </form>
-
-
-    <div class="login-links">
-
-      <a href="#" id="forgotPassword">
-        Forgot password?
-      </a>
-
-      <a href="#" id="createAccount">
-        Create account
-      </a>
+      <div class="muted">
+        Access your MyCosting workspace.
+      </div>
 
     </div>
 
-
-    <div
-      class="login-message"
-      id="loginMessage"
-    ></div>
+    <button
+      class="close"
+      id="closeLogin"
+      type="button"
+      aria-label="Close"
+    >
+      ×
+    </button>
 
   </div>
+
+
+  <form id="loginForm">
+
+    <div class="form-group">
+
+      <label for="loginEmail">
+        Email address
+      </label>
+
+      <input
+        id="loginEmail"
+        type="email"
+        autocomplete="email"
+        required
+        placeholder="name@example.com"
+      >
+
+    </div>
+
+
+    <div class="form-group">
+
+      <label for="loginPassword">
+        Password
+      </label>
+
+      <input
+        id="loginPassword"
+        type="password"
+        autocomplete="current-password"
+        required
+        placeholder="Password"
+      >
+
+    </div>
+
+
+    <button
+      class="login-submit"
+      type="submit"
+    >
+      Sign in
+    </button>
+
+  </form>
+
+
+  <div class="login-links">
+
+    <a href="#" id="forgotPassword">
+      Forgot password?
+    </a>
+
+    <a href="#" id="createAccount">
+      Create account
+    </a>
+
+  </div>
+
+
+  <div
+    class="login-message"
+    id="loginMessage"
+  ></div>
+
+</div>
 
 </div>
 
 
-<!-- =========================================================
+<!-- =====================================================
      PROFILE MODAL
-     ========================================================= -->
+     ===================================================== -->
 
 <div
   class="modal"
@@ -1478,85 +2301,86 @@ footer{
   aria-labelledby="profileTitle"
 >
 
-  <div class="modal-box">
+<div class="modal-box">
 
-    <div class="modal-head">
+  <div class="modal-head">
 
-      <div>
+    <div>
 
-        <h2 id="profileTitle">
-          My Profile
-        </h2>
+      <h2 id="profileTitle">
+        My Profile
+      </h2>
 
-        <div class="muted">
-          Your MyCosting account information.
-        </div>
-
+      <div class="muted">
+        Your MyCosting account information.
       </div>
 
-      <button
-        class="close"
-        id="closeProfile"
-        type="button"
+    </div>
+
+    <button
+      class="close"
+      id="closeProfile"
+      type="button"
+      aria-label="Close"
+    >
+      ×
+    </button>
+
+  </div>
+
+
+  <div class="profile-view">
+
+    <div class="profile-field">
+
+      <div class="profile-label">
+        Name
+      </div>
+
+      <div
+        class="profile-value"
+        id="profileName"
       >
-        ×
-      </button>
+        Guest User
+      </div>
 
     </div>
 
 
-    <div class="profile-view" id="profileView">
+    <div class="profile-field">
 
-      <div class="profile-field">
-
-        <div class="profile-label">
-          Name
-        </div>
-
-        <div
-          class="profile-value"
-          id="profileName"
-        >
-          Guest User
-        </div>
-
+      <div class="profile-label">
+        Email
       </div>
 
-
-      <div class="profile-field">
-
-        <div class="profile-label">
-          Email
-        </div>
-
-        <div
-          class="profile-value"
-          id="profileEmail"
-        >
-          Not signed in
-        </div>
-
+      <div
+        class="profile-value"
+        id="profileEmail"
+      >
+        Not signed in
       </div>
 
+    </div>
 
-      <div class="profile-field">
 
-        <div class="profile-label">
-          Role
-        </div>
+    <div class="profile-field">
 
-        <div
-          class="profile-value"
-          id="profileRole"
-        >
-          Guest
-        </div>
+      <div class="profile-label">
+        Role
+      </div>
 
+      <div
+        class="profile-value"
+        id="profileRole"
+      >
+        Guest
       </div>
 
     </div>
 
   </div>
+
+</div>
 
 </div>
 
@@ -1571,12 +2395,64 @@ const RATE_LIBRARY_KEY =
   "myCosting.rateLibrary.v2";
 
 
+/*
+  Firebase configuration.
+
+  Keep these fields empty until your Firebase project is
+  created. The dashboard will continue working without them.
+
+  Once Firebase Authentication + Realtime Database are
+  connected, the Users Online card can show actual presence.
+*/
+
+const FIREBASE_CONFIG = {
+
+  apiKey:"",
+  authDomain:"",
+  databaseURL:"",
+  projectId:"",
+  storageBucket:"",
+  messagingSenderId:"",
+  appId:""
+
+};
+
+
+/*
+  Market-rate API.
+
+  Leave empty until a verified rate provider/API is selected.
+
+  The dashboard deliberately does NOT claim that static
+  numbers are live market prices.
+
+  Expected response format:
+
+  {
+    "updatedAt":"2026-10-06T10:30:00+05:30",
+    "rates":[
+      {
+        "name":"Cement",
+        "value":520,
+        "unit":"50 kg bag",
+        "change":2.1,
+        "direction":"up",
+        "source":"Provider"
+      }
+    ]
+  }
+*/
+
+const MARKET_RATE_API = "";
+
+
 /* =========================================================
    HELPERS
    ========================================================= */
 
 const $ = id =>
   document.getElementById(id);
+
 
 const fmt =
   new Intl.NumberFormat("en-IN");
@@ -1615,7 +2491,86 @@ function esc(value){
 
 
 /* =========================================================
-   GC BOQ RATE LIBRARY
+   LIVE CLOCK
+   ========================================================= */
+
+function updateClock(){
+
+  const now =
+    new Date();
+
+
+  $("liveClock").textContent =
+    now.toLocaleTimeString(
+      "en-IN",
+      {
+        hour:"2-digit",
+        minute:"2-digit",
+        second:"2-digit",
+        hour12:true
+      }
+    );
+
+
+  $("liveDate").textContent =
+    now.toLocaleDateString(
+      "en-IN",
+      {
+        weekday:"long",
+        day:"2-digit",
+        month:"long",
+        year:"numeric"
+      }
+    );
+
+
+  $("welcomeTitle").textContent =
+    currentUser
+      ? "Welcome, " +
+        (
+          currentUser.name ||
+          currentUser.displayName ||
+          currentUser.email ||
+          "User"
+        )
+      : getGreeting();
+
+}
+
+
+updateClock();
+
+
+setInterval(
+  updateClock,
+  1000
+);
+
+
+/* =========================================================
+   GREETING
+   ========================================================= */
+
+function getGreeting(){
+
+  const hour =
+    new Date().getHours();
+
+  if(hour < 12){
+    return "Good morning";
+  }
+
+  if(hour < 17){
+    return "Good afternoon";
+  }
+
+  return "Good evening";
+
+}
+
+
+/* =========================================================
+   RATE LIBRARY
    ========================================================= */
 
 function loadRates(){
@@ -1698,38 +2653,45 @@ function getAmount(item){
 
 
 /* =========================================================
-   DASHBOARD REFERENCE DATA
+   DASHBOARD BOQ REFERENCE
    ========================================================= */
+
+let activeDiscipline =
+  "All";
+
 
 function renderReferenceRates(){
 
-  const rates =
+  const allRates =
     loadRates();
 
+
   const rated =
-    rates.filter(
+    allRates.filter(
       item =>
         getRateValue(item) > 0
     );
 
+
   const totalValue =
-    rates.reduce(
+    allRates.reduce(
       (sum,item) =>
         sum + getAmount(item),
       0
     );
 
+
   const sources =
     new Set();
 
-  rates.forEach(item => {
+
+  allRates.forEach(item => {
 
     const source =
       [
         item.projectName || "",
         item.sourceFile || ""
-      ]
-      .join("|");
+      ].join("|");
 
     if(source !== "|"){
       sources.add(source);
@@ -1739,48 +2701,65 @@ function renderReferenceRates(){
 
 
   $("cardItems").textContent =
-    fmt.format(rates.length);
+    fmt.format(allRates.length);
+
 
   $("cardRated").textContent =
     fmt.format(rated.length);
 
+
   $("cardValue").textContent =
     money(totalValue);
+
 
   $("cardSources").textContent =
     fmt.format(sources.size);
 
 
-  /* -------------------------------------------------------
-     SHOW LATEST / FIRST 8 REFERENCE ITEMS
-     ------------------------------------------------------- */
+  $("cardItemsStatus").textContent =
+    allRates.length
+      ? "Library connected"
+      : "No imported data";
 
-  const rows =
-    $("referenceRows");
 
-  if(!rates.length){
+  $("cardRatedStatus").textContent =
+    rated.length
+      ? Math.round(
+          rated.length /
+          Math.max(allRates.length,1) *
+          100
+        ) + "% rated"
+      : "Awaiting rates";
 
-    rows.innerHTML =
-      `<tr>
-        <td colspan="5" class="empty">
-          <strong>No GC BOQ reference rates yet.</strong>
-          <br>
-          Upload a GC BOQ Excel file through the
-          <a href="rate-library.html"
-             style="color:var(--accent);">
-             Rate Library
-          </a>
-          to populate this section.
-        </td>
-      </tr>`;
 
-    return;
+  $("cardSourceStatus").textContent =
+    sources.size
+      ? "Sources available"
+      : "Awaiting import";
+
+
+  let rates =
+    [...allRates];
+
+
+  if(activeDiscipline !== "All"){
+
+    rates =
+      rates.filter(
+        item =>
+          String(
+            item.discipline ||
+            "Other"
+          ).toLowerCase()
+          ===
+          activeDiscipline.toLowerCase()
+      );
 
   }
 
 
-  const sorted =
-    [...rates]
+  rates =
+    rates
       .sort(
         (a,b) =>
           String(
@@ -1794,28 +2773,77 @@ function renderReferenceRates(){
       .slice(0,8);
 
 
+  const rows =
+    $("referenceRows");
+
+
+  if(!rates.length){
+
+    rows.innerHTML =
+      `<tr>
+        <td colspan="5" class="empty">
+
+          <strong>
+            ${
+              allRates.length
+                ? "No rates found for this discipline."
+                : "No BOQ reference rates yet."
+            }
+          </strong>
+
+          <br>
+
+          ${
+            allRates.length
+              ? "Try another discipline filter."
+              :
+              `Import a BOQ file through the
+               <a href="rate-library.html"
+                  style="color:var(--accent);">
+                 Rate Library
+               </a>
+               to populate this section.`
+          }
+
+        </td>
+      </tr>`;
+
+    return;
+
+  }
+
+
   rows.innerHTML =
-    sorted.map(item => {
+    rates.map(item => {
 
       const discipline =
         item.discipline ||
         "Other";
 
+
       const description =
         item.description ||
         "Unnamed item";
+
 
       const unit =
         item.unit ||
         "—";
 
+
       const rate =
         getRateValue(item);
+
 
       const project =
         item.projectName ||
         item.sourceFile ||
-        "GC BOQ";
+        "Source BOQ";
+
+
+      const sourceFile =
+        item.sourceFile ||
+        "Imported source";
 
 
       return `
@@ -1828,6 +2856,7 @@ function renderReferenceRates(){
           </td>
 
           <td>
+
             <strong>
               ${esc(description)}
             </strong>
@@ -1856,26 +2885,23 @@ function renderReferenceRates(){
           </td>
 
           <td class="rate">
+
             ${
               rate > 0
-              ?
-              money(rate)
-              :
-              "—"
+                ? money(rate)
+                : "—"
             }
+
           </td>
 
           <td>
+
             ${esc(project)}
+
             <div class="muted">
-              ${
-                item.sourceFile
-                ?
-                esc(item.sourceFile)
-                :
-                "GC BOQ Reference"
-              }
+              ${esc(sourceFile)}
             </div>
+
           </td>
 
         </tr>
@@ -1888,7 +2914,442 @@ function renderReferenceRates(){
 
 
 /* =========================================================
-   LOGIN / PROFILE UI
+   DISCIPLINE FILTERS
+   ========================================================= */
+
+document
+  .querySelectorAll(".filter-btn")
+  .forEach(button => {
+
+    button.addEventListener(
+      "click",
+      function(){
+
+        document
+          .querySelectorAll(".filter-btn")
+          .forEach(btn =>
+            btn.classList.remove("active")
+          );
+
+
+        this.classList.add("active");
+
+
+        activeDiscipline =
+          this.dataset.discipline ||
+          "All";
+
+
+        renderReferenceRates();
+
+      }
+    );
+
+  });
+
+
+/* =========================================================
+   TODAY'S MARKET RATES
+   ========================================================= */
+
+/*
+  These are fallback DISPLAY values only.
+
+  They are deliberately labelled "Indicative" and "Reference".
+  They should be replaced by a verified rate feed/API.
+
+  They are NOT presented as live supplier quotations.
+*/
+
+const FALLBACK_MARKET_RATES = [
+
+  {
+    name:"Cement",
+    value:"—",
+    unit:"50 kg bag",
+    change:null,
+    direction:"flat",
+    source:"Live source not connected"
+  },
+
+  {
+    name:"TMT Steel",
+    value:"—",
+    unit:"kg",
+    change:null,
+    direction:"flat",
+    source:"Live source not connected"
+  },
+
+  {
+    name:"M-Sand",
+    value:"—",
+    unit:"cum",
+    change:null,
+    direction:"flat",
+    source:"Live source not connected"
+  },
+
+  {
+    name:"20 mm Aggregate",
+    value:"—",
+    unit:"cum",
+    change:null,
+    direction:"flat",
+    source:"Live source not connected"
+  },
+
+  {
+    name:"Bricks / Blocks",
+    value:"—",
+    unit:"piece",
+    change:null,
+    direction:"flat",
+    source:"Live source not connected"
+  }
+
+];
+
+
+function renderMarketRates(rates,updatedText){
+
+  const container =
+    $("marketRates");
+
+
+  if(!Array.isArray(rates) || !rates.length){
+
+    rates =
+      FALLBACK_MARKET_RATES;
+
+  }
+
+
+  container.innerHTML =
+    rates
+      .slice(0,5)
+      .map(rate => {
+
+        const value =
+          rate.value === "—"
+            ? "—"
+            : money(rate.value);
+
+
+        let changeHtml =
+          `<span class="change-flat">
+            Reference pending
+           </span>`;
+
+
+        if(
+          Number.isFinite(
+            Number(rate.change)
+          )
+        ){
+
+          const change =
+            Number(rate.change);
+
+
+          const direction =
+            rate.direction ||
+            (
+              change > 0
+                ? "up"
+                : change < 0
+                  ? "down"
+                  : "flat"
+            );
+
+
+          if(direction === "up"){
+
+            changeHtml =
+              `<span class="change-up">
+                ↑ ${Math.abs(change).toFixed(1)}%
+              </span>`;
+
+          }else if(direction === "down"){
+
+            changeHtml =
+              `<span class="change-down">
+                ↓ ${Math.abs(change).toFixed(1)}%
+              </span>`;
+
+          }else{
+
+            changeHtml =
+              `<span class="change-flat">
+                → 0.0%
+              </span>`;
+
+          }
+
+        }
+
+
+        return `
+          <div class="market-rate">
+
+            <div class="market-name">
+              ${esc(rate.name)}
+            </div>
+
+            <div class="market-unit">
+              ${esc(rate.unit || "")}
+            </div>
+
+            <div class="market-value">
+              ${esc(value)}
+            </div>
+
+            <div class="market-change">
+              ${changeHtml}
+            </div>
+
+            <div class="market-source">
+              ${
+                rate.source
+                  ? esc(rate.source)
+                  : "Market reference"
+              }
+            </div>
+
+          </div>
+        `;
+
+      })
+      .join("");
+
+
+  $("marketUpdated").textContent =
+    updatedText ||
+    "Live provider not connected";
+
+
+  $("marketStatus").textContent =
+    MARKET_RATE_API
+      ? "LIVE"
+      : "REFERENCE";
+
+}
+
+
+async function loadMarketRates(){
+
+  if(!MARKET_RATE_API){
+
+    renderMarketRates(
+      FALLBACK_MARKET_RATES,
+      "Verified market feed not connected"
+    );
+
+    return;
+
+  }
+
+
+  try{
+
+    const response =
+      await fetch(
+        MARKET_RATE_API,
+        {
+          cache:"no-store"
+        }
+      );
+
+
+    if(!response.ok){
+      throw new Error("Market feed unavailable");
+    }
+
+
+    const data =
+      await response.json();
+
+
+    const updated =
+      data.updatedAt
+        ? new Date(
+            data.updatedAt
+          ).toLocaleString(
+            "en-IN"
+          )
+        : "Live feed";
+
+
+    renderMarketRates(
+      data.rates,
+      "Updated " + updated
+    );
+
+
+    $("marketStatus").textContent =
+      "LIVE";
+
+
+  }catch(error){
+
+    renderMarketRates(
+      FALLBACK_MARKET_RATES,
+      "Market feed temporarily unavailable"
+    );
+
+
+    $("marketStatus").textContent =
+      "OFFLINE";
+
+  }
+
+}
+
+
+loadMarketRates();
+
+
+/*
+  Refresh the configured market feed every 15 minutes.
+*/
+
+setInterval(
+  loadMarketRates,
+  15 * 60 * 1000
+);
+
+
+/* =========================================================
+   ONLINE USER PRESENCE
+   ========================================================= */
+
+/*
+  Production architecture:
+
+  Firebase Authentication
+        ↓
+  Realtime Database
+        ↓
+  /presence/{uid}
+        ↓
+  Dashboard counts connected users
+
+  The code below intentionally does not fabricate
+  an online-user number when Firebase is not configured.
+*/
+
+
+async function initialisePresence(){
+
+  const configured =
+    FIREBASE_CONFIG.apiKey &&
+    FIREBASE_CONFIG.projectId &&
+    FIREBASE_CONFIG.databaseURL;
+
+
+  if(!configured){
+
+    $("onlineUsers").textContent =
+      "—";
+
+
+    $("onlineStatus").textContent =
+      "Firebase presence not connected";
+
+
+    $("presenceStatus").textContent =
+      "READY";
+
+    return;
+
+  }
+
+
+  /*
+    Firebase integration should be placed here after
+    your Firebase project is configured.
+
+    Required services:
+
+    - Firebase Authentication
+    - Firebase Realtime Database
+    - Presence node
+
+    This dashboard intentionally avoids claiming
+    real online users until that backend exists.
+  */
+
+  $("onlineUsers").textContent =
+    "—";
+
+
+  $("onlineStatus").textContent =
+    "Firebase configured — presence module ready";
+
+
+  $("presenceStatus").textContent =
+    "CONNECTED";
+
+}
+
+
+initialisePresence();
+
+
+/* =========================================================
+   ACTIVITY
+   ========================================================= */
+
+function addActivity(message){
+
+  const list =
+    $("activityList");
+
+
+  const item =
+    document.createElement("div");
+
+
+  item.className =
+    "activity-item";
+
+
+  item.innerHTML =
+    `
+      <span class="activity-dot"></span>
+
+      <div>
+
+        <div class="activity-text">
+          ${esc(message)}
+        </div>
+
+        <div class="activity-time">
+          Just now
+        </div>
+
+      </div>
+    `;
+
+
+  list.prepend(item);
+
+
+  while(
+    list.children.length > 5
+  ){
+
+    list.removeChild(
+      list.lastElementChild
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   LOGIN / PROFILE
    ========================================================= */
 
 let currentUser = null;
@@ -1940,38 +3401,50 @@ function updateUserUI(user){
     $("userName").textContent =
       "Sign in";
 
+
     $("avatar").textContent =
       "G";
+
 
     $("menuName").textContent =
       "Guest User";
 
+
     $("menuEmail").textContent =
       "Sign in to MyCosting";
+
 
     $("menuRole").textContent =
       "Guest";
 
+
     $("signOutButton").hidden =
       true;
+
 
     $("accountGuest").hidden =
       false;
 
+
     $("accountUser").hidden =
       true;
+
 
     $("profileName").textContent =
       "Guest User";
 
+
     $("profileEmail").textContent =
       "Not signed in";
+
 
     $("profileRole").textContent =
       "Guest";
 
+
     $("welcomeTitle").textContent =
       getGreeting();
+
 
     return;
 
@@ -1984,9 +3457,11 @@ function updateUserUI(user){
     user.email ||
     "MyCosting User";
 
+
   const email =
     user.email ||
     "";
+
 
   const role =
     user.role ||
@@ -1996,72 +3471,64 @@ function updateUserUI(user){
   $("userName").textContent =
     name;
 
+
   $("avatar").textContent =
     name
       .trim()
       .charAt(0)
       .toUpperCase();
 
+
   $("menuName").textContent =
     name;
+
 
   $("menuEmail").textContent =
     email;
 
+
   $("menuRole").textContent =
     role;
+
 
   $("signOutButton").hidden =
     false;
 
+
   $("accountGuest").hidden =
     true;
+
 
   $("accountUser").hidden =
     false;
 
+
   $("accountName").textContent =
     name;
+
 
   $("accountEmail").textContent =
     email;
 
+
   $("accountRole").textContent =
     role;
+
 
   $("profileName").textContent =
     name;
 
+
   $("profileEmail").textContent =
     email;
+
 
   $("profileRole").textContent =
     role;
 
+
   $("welcomeTitle").textContent =
     "Welcome, " + name;
-
-}
-
-
-/* =========================================================
-   GREETING
-   ========================================================= */
-
-function getGreeting(){
-
-  const hour =
-    new Date().getHours();
-
-  if(hour < 12){
-    return "Good morning";
-  }
-
-  if(hour < 17){
-    return "Good afternoon";
-  }
-
-  return "Good evening";
 
 }
 
@@ -2131,14 +3598,17 @@ $("signOutButton")
     function(){
 
       /*
-       Real Firebase sign-out will be
-       connected here later.
+        Real Firebase sign-out will be connected here.
       */
 
       updateUserUI(null);
 
       $("profileMenu")
         .classList.remove("open");
+
+      addActivity(
+        "Signed out of MyCosting."
+      );
 
     }
   );
@@ -2151,14 +3621,17 @@ $("loginForm")
 
       event.preventDefault();
 
+
       const email =
         $("loginEmail")
           .value
           .trim();
 
+
       const password =
         $("loginPassword")
           .value;
+
 
       if(!email || !password){
 
@@ -2170,19 +3643,19 @@ $("loginForm")
 
       }
 
+
       /*
-       IMPORTANT:
-       This is intentionally only the UI layer.
+        IMPORTANT:
 
-       Do NOT store passwords in localStorage.
+        Never store passwords in localStorage.
 
-       Firebase Authentication should be connected
-       here for real production authentication.
+        Connect this form to Firebase Authentication
+        for production login.
       */
 
       $("loginMessage")
         .textContent =
-        "Authentication is not connected yet. Your login screen is ready for Firebase Authentication.";
+        "Authentication is ready to be connected to Firebase.";
 
     }
   );
@@ -2195,9 +3668,10 @@ $("forgotPassword")
 
       event.preventDefault();
 
+
       $("loginMessage")
         .textContent =
-        "Password recovery will be connected through Firebase Authentication.";
+        "Password recovery will use Firebase Authentication.";
 
     }
   );
@@ -2210,15 +3684,18 @@ $("createAccount")
 
       event.preventDefault();
 
+
       $("loginMessage")
         .textContent =
-        "Account creation will be connected through Firebase Authentication.";
+        "Account creation will use Firebase Authentication.";
 
     }
   );
 
 
-/* Close profile menu when clicking elsewhere */
+/* =========================================================
+   CLOSE MENUS / MODALS
+   ========================================================= */
 
 document.addEventListener(
   "click",
@@ -2237,8 +3714,6 @@ document.addEventListener(
   }
 );
 
-
-/* Close modal when clicking backdrop */
 
 $("loginModal")
   .addEventListener(
@@ -2266,8 +3741,6 @@ $("profileModal")
   );
 
 
-/* Escape key */
-
 document.addEventListener(
   "keydown",
   function(event){
@@ -2290,17 +3763,14 @@ document.addEventListener(
    INITIALISE
    ========================================================= */
 
-$("welcomeTitle").textContent =
-  getGreeting();
-
 updateUserUI(null);
 
 renderReferenceRates();
 
 
-/* =========================================================
-   REFRESH GC BOQ DATA
-   ========================================================= */
+/*
+  Refresh Rate Library when another page/tab changes it.
+*/
 
 window.addEventListener(
   "storage",
@@ -2312,6 +3782,10 @@ window.addEventListener(
 
       renderReferenceRates();
 
+      addActivity(
+        "BOQ Rate Library updated."
+      );
+
     }
 
   }
@@ -2319,15 +3793,34 @@ window.addEventListener(
 
 
 /*
-  Lightweight refresh so that when the user returns
-  from Rate Library in the same tab, the Dashboard
-  eventually reflects the latest saved library.
+  Same-tab refresh.
+
+  Useful when returning from Rate Library.
 */
 
 setInterval(
   renderReferenceRates,
   3000
 );
+
+
+/*
+  Small activity feedback when user starts
+  common workflows.
+*/
+
+$("quickImport")
+  .addEventListener(
+    "click",
+    function(){
+
+      addActivity(
+        "Opening BOQ Import / Rate Library."
+      );
+
+    }
+  );
+
 
 </script>
 
