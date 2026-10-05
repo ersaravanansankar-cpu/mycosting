@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reports</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Serif:wght@600&display=swap">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<nav id="nav"></nav>
+<main>
+  <h1>Reports</h1>
+  <div id="app"></div>
+</main>
+<script src="shared.js"></script>
+<script>
+RA.nav("reports");
+var S = RA.settings(), P = RA.projects(), B = RA.get("ra.boq", {}), AN = RA.analyses(), sel = RA.get("ra.cur", null);
+if (!P.some(function (p) { return p.id === sel; })) sel = P[0] && P[0].id;
+function amt(i) { return RA.num(i.qty) * RA.num(i.rate); }
+function draw() {
+  var h = '<div class="card"><h2>Project summary</h2><div class="tw"><table><thead><tr><th>Project</th><th>Client</th><th>Status</th><th class="n">Items</th><th class="n">Subtotal</th><th class="n">GST</th><th class="n">Total</th></tr></thead><tbody>';
+  var g = 0;
+  if (!P.length) h += '<tr><td colspan="7" class="empty">No projects yet.</td></tr>';
+  P.forEach(function (p) {
+    var it = B[p.id] || [], t = RA.boqTotal(it, S.gst); g += t.all;
+    h += "<tr><td>" + RA.esc(p.name) + "</td><td>" + RA.esc(p.client) + "</td><td>" + RA.esc(p.status) + '</td><td class="n">' + it.length + '</td><td class="amt">' + RA.money(t.sub) + '</td><td class="amt">' + RA.money(t.gst) + '</td><td class="amt">' + RA.money(t.all) + "</td></tr>";
+  });
+  h += '</tbody></table></div><div class="sum"><div class="tot"><span>All projects</span><span>' + S.cur + " " + RA.money(g) + '</span></div></div><div class="bar"><button id="csvAll">Export summary CSV</button></div></div>';
+
+  if (P.length) {
+    h += '<div class="card"><h2>BOQ detail</h2><div class="g"><div><label>Project</label><select id="proj">' +
+      P.map(function (p) { return '<option value="' + p.id + '"' + (p.id === sel ? " selected" : "") + ">" + RA.esc(p.name) + "</option>"; }).join("") + "</select></div></div>";
+    var it = B[sel] || [], t = RA.boqTotal(it, S.gst);
+    h += '<div class="tw"><table><thead><tr><th>No.</th><th>Description</th><th>Unit</th><th class="n">Qty</th><th class="n">Rate</th><th class="n">Amount</th></tr></thead><tbody>';
+    if (!it.length) h += '<tr><td colspan="6" class="empty">This project has no BOQ items.</td></tr>';
+    it.forEach(function (i, n) { h += "<tr><td>" + (n + 1) + "</td><td>" + RA.esc(i.desc) + "</td><td>" + RA.esc(i.unit) + '</td><td class="amt">' + RA.esc(i.qty) + '</td><td class="amt">' + RA.money(RA.num(i.rate)) + '</td><td class="amt">' + RA.money(amt(i)) + "</td></tr>"; });
+    h += '</tbody></table></div><div class="sum"><div><span>Subtotal</span><span>' + RA.money(t.sub) + "</span></div><div><span>GST " + RA.esc(S.gst) + '%</span><span>' + RA.money(t.gst) + '</span></div><div class="tot"><span>Total</span><span>' + S.cur + " " + RA.money(t.all) + '</span></div></div><div class="bar"><button id="csvOne">Export CSV</button><button id="print">Print</button></div></div>';
+  }
+
+  h += '<div class="card"><h2>Rate analysis register</h2><div class="tw"><table><thead><tr><th>Code</th><th>Item</th><th>Unit</th><th class="n">Rate</th></tr></thead><tbody>';
+  if (!AN.length) h += '<tr><td colspan="4" class="empty">No rate analyses saved yet.</td></tr>';
+  AN.forEach(function (a) { h += "<tr><td>" + RA.esc(a.code) + "</td><td>" + RA.esc(a.name) + "</td><td>" + RA.esc(a.unit) + '</td><td class="amt">' + RA.money(RA.calcRate(a)) + "</td></tr>"; });
+  h += "</tbody></table></div></div>";
+  document.getElementById("app").innerHTML = h;
+}
+document.addEventListener("change", function (e) { if (e.target.id === "proj") { sel = e.target.value; draw(); } });
+document.addEventListener("click", function (e) {
+  var id = e.target.id;
+  if (id === "print") window.print();
+  if (id === "csvAll") {
+    var rows = [["Project", "Client", "Status", "Items", "Subtotal", "GST", "Total"]];
+    P.forEach(function (p) { var it = B[p.id] || [], t = RA.boqTotal(it, S.gst); rows.push([p.name, p.client, p.status, it.length, t.sub, t.gst, t.all]); });
+    RA.csv("project-summary", rows);
+  }
+  if (id === "csvOne") {
+    var p = P.filter(function (x) { return x.id === sel; })[0], it = B[sel] || [];
+    var rows = [["Project", p.name], [], ["No.", "Description", "Unit", "Qty", "Rate", "Amount"]];
+    it.forEach(function (i, n) { rows.push([n + 1, i.desc, i.unit, i.qty, i.rate, amt(i)]); });
+    RA.csv("boq-" + p.name.replace(/\s+/g, "-"), rows);
+  }
+});
+draw();
+</script>
+</body>
+</html>

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BOQ</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Serif:wght@600&display=swap">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<nav id="nav"></nav>
+<main>
+  <h1>Bill of Quantities</h1>
+  <div id="app"></div>
+</main>
+<script src="shared.js"></script>
+<script>
+RA.nav("boq");
+var S = RA.settings(), P = RA.projects(), B = RA.get("ra.boq", {}), pid = RA.get("ra.cur", null), AN = RA.analyses();
+if (!P.some(function (p) { return p.id === pid; })) pid = P[0] && P[0].id;
+function items() { return (B[pid] = B[pid] || []); }
+function save() { RA.set("ra.boq", B); RA.set("ra.cur", pid); }
+function amt(i) { return RA.num(i.qty) * RA.num(i.rate); }
+function sumHtml() {
+  var t = RA.boqTotal(items(), S.gst);
+  return "<div><span>Subtotal</span><span>" + S.cur + " " + RA.money(t.sub) + "</span></div>" +
+    "<div><span>GST " + RA.esc(S.gst) + "%</span><span>" + S.cur + " " + RA.money(t.gst) + "</span></div>" +
+    '<div class="tot"><span>Total</span><span>' + S.cur + " " + RA.money(t.all) + "</span></div>";
+}
+function draw() {
+  var app = document.getElementById("app");
+  if (!pid) { app.innerHTML = '<div class="card empty">Create a project first. <a href="projects.html">Go to Projects</a></div>'; return; }
+  var h = '<div class="card"><div class="g"><div><label>Project</label><select id="proj">' +
+    P.map(function (p) { return '<option value="' + p.id + '"' + (p.id === pid ? " selected" : "") + ">" + RA.esc(p.name) + "</option>"; }).join("") +
+    "</select></div></div></div>";
+  h += '<div class="card"><div class="tw"><table><thead><tr><th>No.</th><th>Description</th><th>Unit</th><th class="n">Qty</th><th class="n">Rate</th><th class="n">Amount</th><th></th></tr></thead><tbody>';
+  if (!items().length) h += '<tr><td colspan="7" class="empty">No items yet. Add an item or pull one from a rate analysis.</td></tr>';
+  items().forEach(function (i, n) {
+    h += '<tr data-id="' + i.id + '"><td>' + (n + 1) + "</td>" +
+      '<td><input data-k="desc" value="' + RA.esc(i.desc) + '"></td>' +
+      '<td><input data-k="unit" value="' + RA.esc(i.unit) + '" style="width:64px"></td>' +
+      '<td><input class="n" type="number" step="any" data-k="qty" value="' + RA.esc(i.qty) + '" style="width:90px"></td>' +
+      '<td><input class="n" type="number" step="any" data-k="rate" value="' + RA.esc(i.rate) + '" style="width:110px"></td>' +
+      '<td class="amt" data-amt>' + RA.money(amt(i)) + '</td><td><button class="x" data-del>Remove</button></td></tr>';
+  });
+  h += '</tbody></table></div><div class="bar"><button class="p" id="add">Add item</button>';
+  h += '<div><label>Add from rate analysis</label><select id="imp"><option value="">Choose an analysis</option>' +
+    AN.map(function (a) { return '<option value="' + a.id + '">' + RA.esc((a.code ? a.code + " - " : "") + a.name) + " (" + RA.money(RA.calcRate(a)) + "/" + RA.esc(a.unit) + ")</option>"; }).join("") + "</select></div></div></div>";
+  h += '<div class="card"><div class="sum" id="sum">' + sumHtml() + '</div><div class="bar"><button id="csv">Export CSV</button><button id="print">Print</button></div></div>';
+  app.innerHTML = h;
+}
+document.addEventListener("input", function (e) {
+  var k = e.target.getAttribute("data-k"); if (!k) return;
+  var tr = e.target.closest("tr"), id = tr.getAttribute("data-id");
+  var i = items().filter(function (x) { return x.id === id; })[0];
+  i[k] = e.target.value; save();
+  tr.querySelector("[data-amt]").textContent = RA.money(amt(i));
+  document.getElementById("sum").innerHTML = sumHtml();
+});
+document.addEventListener("change", function (e) {
+  if (e.target.id === "proj") { pid = e.target.value; save(); draw(); }
+  if (e.target.id === "imp" && e.target.value) {
+    var a = AN.filter(function (x) { return x.id === e.target.value; })[0];
+    items().push({ id: RA.uid(), desc: a.name, unit: a.unit, qty: 0, rate: Math.round(RA.calcRate(a) * 100) / 100 });
+    save(); draw();
+  }
+});
+document.addEventListener("click", function (e) {
+  var t = e.target;
+  if (t.id === "add") { items().push({ id: RA.uid(), desc: "", unit: "", qty: 0, rate: 0 }); save(); draw(); }
+  if (t.hasAttribute("data-del")) {
+    var id = t.closest("tr").getAttribute("data-id");
+    B[pid] = items().filter(function (x) { return x.id !== id; }); save(); draw();
+  }
+  if (t.id === "print") window.print();
+  if (t.id === "csv") {
+    var p = P.filter(function (x) { return x.id === pid; })[0], tt = RA.boqTotal(items(), S.gst);
+    var rows = [["Project", p.name], [], ["No.", "Description", "Unit", "Qty", "Rate", "Amount"]];
+    items().forEach(function (i, n) { rows.push([n + 1, i.desc, i.unit, i.qty, i.rate, amt(i)]); });
+    rows.push([], ["Subtotal", tt.sub], ["GST " + S.gst + "%", tt.gst], ["Total", tt.all]);
+    RA.csv("boq-" + p.name.replace(/\s+/g, "-"), rows);
+  }
+});
+draw();
+</script>
+</body>
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Projects</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Serif:wght@600&display=swap">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<nav id="nav"></nav>
+<main>
+  <h1>Projects</h1>
+  <div class="card">
+    <div class="tw"><table><thead><tr><th>Name</th><th>Client</th><th>Location</th><th>Status</th><th>Start date</th><th></th></tr></thead><tbody id="rows"></tbody></table></div>
+    <div class="bar"><button class="p" id="add">New project</button></div>
+  </div>
+</main>
+<script src="shared.js"></script>
+<script>
+RA.nav("projects");
+var P = RA.projects(), STATUS = ["Planning", "Active", "On hold", "Completed"];
+function save() { RA.set("ra.projects", P); }
+function draw() {
+  var h = P.length ? "" : '<tr><td colspan="6" class="empty">No projects yet. Add one to start a BOQ.</td></tr>';
+  P.forEach(function (p) {
+    h += '<tr data-id="' + p.id + '">' +
+      '<td><input data-k="name" value="' + RA.esc(p.name) + '"></td>' +
+      '<td><input data-k="client" value="' + RA.esc(p.client) + '"></td>' +
+      '<td><input data-k="location" value="' + RA.esc(p.location) + '"></td>' +
+      '<td><select data-k="status">' + STATUS.map(function (s) { return "<option" + (s === p.status ? " selected" : "") + ">" + s + "</option>"; }).join("") + "</select></td>" +
+      '<td><input type="date" data-k="start" value="' + RA.esc(p.start) + '"></td>' +
+      '<td style="white-space:nowrap"><button data-open>Open BOQ</button><button class="x" data-del>Remove</button></td></tr>';
+  });
+  document.getElementById("rows").innerHTML = h;
+}
+document.addEventListener("input", function (e) {
+  var k = e.target.getAttribute("data-k"); if (!k) return;
+  var id = e.target.closest("tr").getAttribute("data-id");
+  P.filter(function (p) { return p.id === id; })[0][k] = e.target.value; save();
+});
+document.addEventListener("click", function (e) {
+  var t = e.target;
+  if (t.id === "add") { P.push({ id: RA.uid(), name: "New project", client: "", location: "", status: "Planning", start: "" }); save(); draw(); return; }
+  var tr = t.closest("tr"); if (!tr) return;
+  var id = tr.getAttribute("data-id");
+  if (t.hasAttribute("data-open")) { RA.set("ra.cur", id); location.href = "boq.html"; }
+  if (t.hasAttribute("data-del")) {
+    if (!confirm("Remove this project and its BOQ?")) return;
+    P = P.filter(function (p) { return p.id !== id; }); save();
+    var B = RA.get("ra.boq", {}); delete B[id]; RA.set("ra.boq", B); draw();
+  }
+});
+draw();
+</script>
+</body>
+</html>

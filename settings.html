@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Settings</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Serif:wght@600&display=swap">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<nav id="nav"></nav>
+<main>
+  <h1>Settings</h1>
+  <div class="card">
+    <h2>General</h2>
+    <div class="g">
+      <div><label for="company">Company name</label><input id="company"></div>
+      <div><label for="cur">Currency symbol</label><input id="cur" maxlength="4"></div>
+      <div><label for="gst">GST on BOQ (%)</label><input id="gst" type="number" step="any" min="0"></div>
+    </div>
+    <p id="msg" style="color:var(--mute);margin:10px 0 0" role="status"></p>
+  </div>
+  <div class="card">
+    <h2>Data</h2>
+    <p style="color:var(--mute);margin-top:0">Everything is saved in this browser. Download a backup before clearing the browser or switching devices.</p>
+    <div class="bar">
+      <button class="p" id="backup">Download backup</button>
+      <button id="restore">Restore from backup</button>
+      <button class="x" id="wipe">Delete all data</button>
+      <input type="file" id="file" accept="application/json" hidden>
+    </div>
+  </div>
+</main>
+<script src="shared.js"></script>
+<script>
+var KEYS = ["ra.settings", "ra.projects", "ra.boq", "ra.cur", "rateAnalysis.v1"];
+var s = RA.settings(), msg = document.getElementById("msg");
+["company", "cur", "gst"].forEach(function (k) {
+  var el = document.getElementById(k); el.value = s[k];
+  el.addEventListener("input", function () {
+    s[k] = el.value; RA.set("ra.settings", s); RA.nav("settings"); msg.textContent = "Settings saved.";
+  });
+});
+RA.nav("settings");
+document.addEventListener("click", function (e) {
+  var id = e.target.id;
+  if (id === "backup") {
+    var d = {}; KEYS.forEach(function (k) { d[k] = RA.get(k, null); });
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(new Blob([JSON.stringify(d, null, 2)], { type: "application/json" }));
+    a.download = "rate-analysis-backup.json"; a.click(); URL.revokeObjectURL(a.href);
+  }
+  if (id === "restore") document.getElementById("file").click();
+  if (id === "wipe" && confirm("Delete all projects, BOQs, rate analyses and settings from this browser?")) {
+    KEYS.forEach(function (k) { try { localStorage.removeItem(k); } catch (x) {} });
+    msg.textContent = "All data deleted."; location.reload();
+  }
+});
+document.getElementById("file").addEventListener("change", function (e) {
+  var f = e.target.files[0]; if (!f) return;
+  var r = new FileReader();
+  r.onload = function () {
+    try {
+      var d = JSON.parse(r.result);
+      KEYS.forEach(function (k) { if (d[k] != null) RA.set(k, d[k]); });
+      msg.textContent = "Backup restored."; location.reload();
+    } catch (x) { msg.textContent = "That file is not a valid backup."; }
+  };
+  r.readAsText(f);
+});
+</script>
+</body>
+</html>
